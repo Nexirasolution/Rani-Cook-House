@@ -58,7 +58,7 @@ export default function ShippingLabelPage() {
         </button>
         <button
           onClick={() => window.print()}
-          className="rounded-full bg-forest px-5 py-2 text-sm font-semibold text-ivory shadow-card"
+          className="rounded-full bg-maroon px-5 py-2 text-sm font-semibold text-ivory shadow-card"
         >
           Print label
         </button>

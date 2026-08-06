@@ -170,7 +170,7 @@ export default function AdminProductsPage() {
           <button
             onClick={() => setBulkOpen(true)}
             disabled={categories.length === 0}
-            className="rounded-full border border-forest px-6 py-2 text-sm font-semibold text-maroon hover:bg-forest/5 disabled:opacity-50"
+            className="rounded-full border border-maroon px-6 py-2 text-sm font-semibold text-maroon hover:bg-maroon/5 disabled:opacity-50"
             title={categories.length === 0 ? "Add a category first" : ""}
           >
             Bulk Upload
@@ -178,7 +178,7 @@ export default function AdminProductsPage() {
           <button
             onClick={openAdd}
             disabled={categories.length === 0}
-            className="rounded-full bg-forest px-6 py-2 text-sm font-semibold text-ivory shadow-soft hover:bg-forest-light disabled:opacity-50"
+            className="rounded-full bg-maroon px-6 py-2 text-sm font-semibold text-ivory shadow-soft hover:bg-maroon-light disabled:opacity-50"
             title={categories.length === 0 ? "Add a category first" : ""}
           >
             + Add Product
@@ -239,7 +239,7 @@ export default function AdminProductsPage() {
                     </span>
                   </td>
                   <td className="px-4 py-3">
-                    <span className={`rounded-full px-3 py-1 text-xs font-medium ${p.isActive ? "bg-forest/10 text-maroon" : "bg-muted/10 text-muted"}`}>
+                    <span className={`rounded-full px-3 py-1 text-xs font-medium ${p.isActive ? "bg-maroon/10 text-maroon" : "bg-muted/10 text-muted"}`}>
                       {p.isActive ? "Active" : "Hidden"}
                     </span>
                   </td>
@@ -392,7 +392,7 @@ export default function AdminProductsPage() {
           <button
             type="submit"
             disabled={saving}
-            className="w-full rounded-full bg-forest px-8 py-3 text-sm font-semibold text-ivory shadow-soft hover:bg-forest-light disabled:opacity-60"
+            className="w-full rounded-full bg-maroon px-8 py-3 text-sm font-semibold text-ivory shadow-soft hover:bg-maroon-light disabled:opacity-60"
           >
             {saving ? "Saving..." : editingId ? "Save Changes" : "Add Product"}
           </button>

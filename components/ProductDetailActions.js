@@ -30,7 +30,7 @@ export default function ProductDetailActions({ product }) {
           <div className="flex items-center rounded-full border border-gold/30">
             <button
               onClick={() => setQty((q) => Math.max(1, q - 1))}
-              className="px-4 py-2 text-lg text-forest"
+              className="px-4 py-2 text-lg text-maroon"
               aria-label="Decrease quantity"
             >
               −
@@ -38,7 +38,7 @@ export default function ProductDetailActions({ product }) {
             <span className="w-8 text-center text-sm font-semibold">{qty}</span>
             <button
               onClick={() => setQty((q) => Math.min(product.stock, q + 1))}
-              className="px-4 py-2 text-lg text-forest"
+              className="px-4 py-2 text-lg text-maroon"
               aria-label="Increase quantity"
             >
               +
@@ -51,14 +51,14 @@ export default function ProductDetailActions({ product }) {
         <button
           onClick={handleAdd}
           disabled={outOfStock}
-          className="flex-1 rounded-full border border-forest px-8 py-3.5 text-sm font-semibold text-forest transition hover:bg-champagne disabled:cursor-not-allowed disabled:border-muted/40 disabled:text-muted"
+          className="flex-1 rounded-full border border-maroon px-8 py-3.5 text-sm font-semibold text-maroon transition hover:bg-champagne disabled:cursor-not-allowed disabled:border-muted/40 disabled:text-muted"
         >
           {outOfStock ? "Out of Stock" : added ? "Added to Cart ✓" : "Add to Cart"}
         </button>
         <button
           onClick={handleBuyNow}
           disabled={outOfStock}
-          className="flex-1 rounded-full bg-forest px-8 py-3.5 text-sm font-semibold text-ivory shadow-soft transition hover:bg-forest-light disabled:cursor-not-allowed disabled:bg-muted/40"
+          className="flex-1 rounded-full bg-maroon px-8 py-3.5 text-sm font-semibold text-ivory shadow-soft transition hover:bg-maroon-light disabled:cursor-not-allowed disabled:bg-muted/40"
         >
           Buy Now
         </button>

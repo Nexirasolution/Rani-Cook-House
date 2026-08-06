@@ -13,7 +13,7 @@ export default function Modal({ open, onClose, title, children, wide }) {
       >
         {/* Sticky header */}
         <div className="flex shrink-0 items-center justify-between border-b border-gold/10 px-5 py-4 sm:border-none sm:px-6 sm:pb-0 sm:pt-6">
-          <h2 className="font-display text-lg font-bold text-forest pr-4 truncate">
+          <h2 className="font-display text-lg font-bold  pr-4 truncate">
             {title}
           </h2>
           <button

@@ -17,11 +17,11 @@ export default function ProductAccordion({ items }) {
               onClick={() => setOpenIndex(isOpen ? -1 : idx)}
               className="flex w-full items-center justify-between py-4 text-left"
             >
-              <span className="font-display text-sm font-semibold text-forest md:text-base">
+              <span className="font-display text-sm font-semibold  md:text-base">
                 {item.title}
               </span>
               <ChevronDown
-                className={`h-4 w-4 shrink-0 text-forest transition-transform duration-300 ${
+                className={`h-4 w-4 shrink-0 text-maroon transition-transform duration-300 ${
                   isOpen ? "rotate-180" : ""
                 }`}
               />

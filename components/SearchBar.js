@@ -30,7 +30,7 @@ export default function SearchBar() {
       />
       <button
         type="submit"
-        className="shrink-0 rounded-full bg-forest px-5 py-2 text-sm font-semibold text-white transition hover:bg-forest/90"
+        className="shrink-0 rounded-full bg-maroon px-5 py-2 text-sm font-semibold text-white transition hover:bg-maroon/90"
       >
         Search
       </button>

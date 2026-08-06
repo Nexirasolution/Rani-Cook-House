@@ -58,13 +58,13 @@ export default function BulkUploadModal({ open, onClose, onDone }) {
         <a
           href="/product_bulk_upload_template.xlsx"
           download
-          className="inline-block text-xs font-semibold text-forest hover:underline"
+          className="inline-block text-xs font-semibold text-maroon hover:underline"
         >
           Download the template →
         </a>
 
         <form onSubmit={handleUpload} className="space-y-3">
-          <label className="block cursor-pointer rounded-xl border-2 border-dashed border-gold/30 px-4 py-8 text-center text-sm text-muted hover:border-forest">
+          <label className="block cursor-pointer rounded-xl border-2 border-dashed border-gold/30 px-4 py-8 text-center text-sm text-muted hover:border-maroon">
             <input
               ref={fileRef}
               type="file"
@@ -84,7 +84,7 @@ export default function BulkUploadModal({ open, onClose, onDone }) {
           <button
             type="submit"
             disabled={uploading}
-            className="w-full rounded-full bg-forest px-8 py-3 text-sm font-semibold text-ivory shadow-soft hover:bg-forest-light disabled:opacity-60"
+            className="w-full rounded-full bg-maroon px-8 py-3 text-sm font-semibold text-ivory shadow-soft hover:bg-maroon-light disabled:opacity-60"
           >
             {uploading ? "Uploading..." : "Upload"}
           </button>
@@ -110,7 +110,7 @@ export default function BulkUploadModal({ open, onClose, onDone }) {
                     <tr key={r.row} className="border-t border-gold/10">
                       <td className="py-1 pr-2 text-ink/70">{r.row}</td>
                       <td className="py-1 pr-2 text-ink/70">{r.name || "—"}</td>
-                      <td className={`py-1 ${r.status === "error" ? "text-terracotta" : "text-forest"}`}>
+                      <td className={`py-1 ${r.status === "error" ? "text-terracotta" : "text-maroon"}`}>
                         {r.status === "error" ? r.message : "Added"}
                       </td>
                     </tr>

@@ -2,29 +2,39 @@
 
 import Image from "next/image";
 import Link from "next/link";
+import { Playfair_Display } from "next/font/google";
+
+const playfair = Playfair_Display({
+  subsets: ["latin"],
+  weight: ["400", "500"],
+});
 
 export default function HeroSlider() {
   return (
-    <section className="relative min-h-[70vh] md:h-[85vh] overflow-hidden">
-      {/* Background Image */}
+    <section className="relative h-[65vh] overflow-hidden sm:h-[75vh] lg:h-screen">
+      {/* Background */}
       <Image
         src="/hero/hero-banner.png"
         alt="Rani's Cook House"
         fill
         priority
-        className="object-cover"
+        className="object-cover object-center"
       />
 
       {/* Overlay */}
-      <div className="absolute inset-0 bg-gradient-to-r from-black/70 via-black/40 to-transparent" />
+      <div className="absolute inset-0 bg-black/45" />
 
       {/* Content */}
-      <div className="relative z-10 mx-auto flex min-h-[70vh] md:h-full max-w-7xl items-center px-6 sm:px-8 lg:px-12">
-        <div className="max-w-xl lg:max-w-2xl">
+      <div className="relative z-10 mx-auto flex h-full max-w-7xl items-center px-6 sm:px-10 lg:px-16">
+        <div className="max-w-2xl">
 
+          {/* Tagline */}
           
 
-          <h1 className="font-display text-xl sm:text-3xl md:text-6xl lg:text-7xl font-medium leading-tight text-white">
+          {/* Heading */}
+          <h1
+            className={`${playfair.className} text-4xl font-normal leading-[1.1] tracking-tight text-white sm:text-12xl md:text-6xl lg:text-7xl xl:text-8xl`}
+          >
             Authentic Homemade
             <br />
             Pickles & Traditional Foods
@@ -32,13 +42,22 @@ export default function HeroSlider() {
 
           
 
-          <Link
-            href="/products"
-            className="mt-8 inline-flex rounded-full bg-[#7A1C1C] px-6 sm:px-8 py-3 sm:py-4 text-sm sm:text-base font-medium text-white transition hover:bg-[#5E1515]"
-          >
-            Shop Now
-          </Link>
+          {/* Buttons */}
+          <div className="mt-8 flex flex-wrap gap-4">
+            <Link
+              href="/products"
+              className="rounded-full bg-maroon px-8 py-3.5 text-sm font-medium text-white transition duration-300 hover:bg-[#651414]"
+            >
+              Shop Now
+            </Link>
 
+            <Link
+              href="/categories"
+              className="rounded-full border border-white px-8 py-3.5 text-sm font-medium text-white transition duration-300 hover:bg-white hover:text-maroon"
+            >
+              Explore Categories
+            </Link>
+          </div>
         </div>
       </div>
     </section>

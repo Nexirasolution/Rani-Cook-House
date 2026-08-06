@@ -131,7 +131,7 @@ export default function TrackOrderPage() {
                               {idx + 1}
                             </span>
                             {idx !== STATUS_STEPS.length - 1 && (
-                              <div className={`h-0.5 flex-1 ${idx < currentIdx ? "bg-forest" : "bg-gold/20"}`} />
+                              <div className={`h-0.5 flex-1 ${idx < currentIdx ? "bg-maroon" : "bg-gold/20"}`} />
                             )}
                           </div>
                           <span className="mt-2 text-center text-[10px] font-medium text-ink/70">
@@ -167,7 +167,7 @@ export default function TrackOrderPage() {
                         <a  href={order.tracking.trackingUrl}
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="mt-3 inline-block rounded-full bg-forest px-5 py-2 text-xs font-semibold text-ivory shadow-soft transition hover:bg-forest-light"
+                          className="mt-3 inline-block rounded-full bg-maroon px-5 py-2 text-xs font-semibold text-ivory shadow-soft transition hover:bg-maroon-light"
                         >
                           Track shipment &rarr;
                         </a>

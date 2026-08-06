@@ -84,7 +84,7 @@ export default async function CategoriesPage({ searchParams }) {
                     />
                   </div>
 
-                  <h3 className="mt-3 text-center text-sm font-semibold text-ink transition group-hover:text-forest md:text-base">
+                  <h3 className="mt-3 text-center text-sm font-semibold text-ink transition group-hover:text-maroon md:text-base">
                     {cat.name}
                   </h3>
                 </Link>

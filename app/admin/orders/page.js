@@ -128,7 +128,7 @@ export default function AdminOrdersPage() {
           <button
             key={s}
             onClick={() => setFilter(s)}
-            className={`rounded-full border px-4 py-1.5 text-xs font-semibold capitalize ${filter === s ? "border-foresborder-maroon bg-maroon text-whitet bg-forest text-ivory" : "border-gold/30 text-ink/70"}`}
+            className={`rounded-full border px-4 py-1.5 text-xs font-semibold capitalize ${filter === s ? "border-foresborder-maroon bg-maroon text-whitet bg-maroon text-ivory" : "border-gold/30 text-ink/70"}`}
           >
             {s}
           </button>
@@ -358,7 +358,7 @@ export default function AdminOrdersPage() {
               <button
                 onClick={saveTracking}
                 disabled={updating}
-                className="rounded-full bg-forest px-5 py-2 text-xs font-semibold text-ivory shadow-card disabled:opacity-60"
+                className="rounded-full bg-maroon px-5 py-2 text-xs font-semibold text-ivory shadow-card disabled:opacity-60"
               >
                 {updating ? "Saving..." : "Save tracking"}
               </button>

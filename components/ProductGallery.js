@@ -95,7 +95,7 @@ export default function ProductGallery({ media, productName }) {
               type="button"
               onClick={goPrev}
               aria-label="Previous image"
-              className="absolute left-3 top-1/2 flex h-9 w-9 -translate-y-1/2 items-center justify-center rounded-full bg-white/80 text-forest opacity-0 shadow-md backdrop-blur transition hover:bg-white group-hover:opacity-100 md:opacity-0"
+              className="absolute left-3 top-1/2 flex h-9 w-9 -translate-y-1/2 items-center justify-center rounded-full bg-white/80 text-maroon opacity-0 shadow-md backdrop-blur transition hover:bg-white group-hover:opacity-100 md:opacity-0"
             >
               <ChevronLeft className="h-5 w-5" />
             </button>
@@ -103,7 +103,7 @@ export default function ProductGallery({ media, productName }) {
               type="button"
               onClick={goNext}
               aria-label="Next image"
-              className="absolute right-3 top-1/2 flex h-9 w-9 -translate-y-1/2 items-center justify-center rounded-full bg-white/80 text-forest opacity-0 shadow-md backdrop-blur transition hover:bg-white group-hover:opacity-100 md:opacity-0"
+              className="absolute right-3 top-1/2 flex h-9 w-9 -translate-y-1/2 items-center justify-center rounded-full bg-white/80 text-maroon opacity-0 shadow-md backdrop-blur transition hover:bg-white group-hover:opacity-100 md:opacity-0"
             >
               <ChevronRight className="h-5 w-5" />
             </button>
@@ -114,7 +114,7 @@ export default function ProductGallery({ media, productName }) {
                 <span
                   key={index}
                   className={`h-1.5 w-1.5 rounded-full transition ${
-                    index === activeIndex ? "bg-forest" : "bg-white/70"
+                    index === activeIndex ? "bg-maroon" : "bg-white/70"
                   }`}
                 />
               ))}
@@ -133,7 +133,7 @@ export default function ProductGallery({ media, productName }) {
                 ref={(el) => (thumbRefs.current[index] = el)}
                 onClick={() => goTo(index)}
                 className={`relative h-16 w-16 shrink-0 overflow-hidden rounded-lg border-2 transition ${
-                  index === activeIndex ? "border-forest" : "border-transparent"
+                  index === activeIndex ? "border-maroon" : "border-transparent"
                 }`}
               >
                 {itemIsVideo ? (

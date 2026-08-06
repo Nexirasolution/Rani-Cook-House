@@ -36,7 +36,7 @@ export default function AdminLoginPage() {
     <div className="flex min-h-screen items-center justify-center bg-leaf-corner px-5">
       <div className="w-full max-w-sm rounded-xl2 border border-gold/20 bg-white p-8 shadow-soft">
         <div className="flex flex-col items-center">
-          <span className="badge-stamp flex h-14 w-14 items-center justify-center border-gold/40 bg-forest text-ivory">
+          <span className="badge-stamp flex h-14 w-14 items-center justify-center border-gold/40 bg-maroon text-ivory">
             <LeafIcon className="h-6 w-6" />
           </span>
           <h1 className="mt-4 font-display text-xl font-bold text-maroon">Rani's Cook House Admin</h1>
@@ -61,7 +61,7 @@ export default function AdminLoginPage() {
               required
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              className="w-full rounded-xl border border-gold/30 px-4 py-2.5 text-sm outline-none focus:border-forest"
+              className="w-full rounded-xl border border-gold/30 px-4 py-2.5 text-sm outline-none focus:border-maroon"
             />
           </label>
 
@@ -70,7 +70,7 @@ export default function AdminLoginPage() {
           <button
             type="submit"
             disabled={loading}
-            className="w-full rounded-full bg-forest px-8 py-3 text-sm font-semibold text-ivory shadow-soft transition hover:bg-forest-light disabled:opacity-60"
+            className="w-full rounded-full bg-maroon px-8 py-3 text-sm font-semibold text-ivory shadow-soft transition hover:bg-maroon-light disabled:opacity-60"
           >
             {loading ? "Signing in..." : "Sign In"}
           </button>

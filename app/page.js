@@ -127,7 +127,7 @@ export default async function HomePage() {
             <div className="mt-10 flex justify-center">
               <Link
                 href="/products"
-                className="inline-flex items-center gap-2 rounded-full bg-forest px-8 py-3 text-sm font-semibold text-white transition hover:bg-forest/90"
+                className="inline-flex items-center gap-2 rounded-full bg-maroon px-8 py-3 text-sm font-semibold text-white transition hover:bg-maroon/90"
               >
                 Shop Now
                 <span aria-hidden="true">&rarr;</span>
