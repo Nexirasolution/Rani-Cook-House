@@ -1,26 +1,62 @@
+"use client";
+
 import Link from "next/link";
 import Image from "next/image";
-export default function ProductCard({
-  product
-}) {
-  const img = product.images?.[0]?.url;
+import { LeafIcon } from "@/components/Icons";
+
+export default function ProductCard({ product }) {
+  const img = product.media?.[0]?.url;
   const outOfStock = product.stock <= 0;
-  return <Link href={`/products/${product.slug}`} className="group block bg-white/60 border border-stoneline rounded-2xl overflow-hidden hover:shadow-xl hover:-translate-y-1 transition-all duration-300">
-      <div className="relative aspect-square bg-stoneline/50 overflow-hidden">
-        {img ? <Image src={img} alt={product.name} fill className="object-cover group-hover:scale-105 transition-transform duration-500" /> : <div className="w-full h-full flex items-center justify-center text-maroon/30 font-display italic text-2xl">
-            Abi
-          </div>}
-        {outOfStock && <span className="absolute top-3 left-3 bg-ink text-cream text-[10px] font-bold uppercase tracking-wide px-2 py-1 rounded-full">
-            Out of stock
-          </span>}
+
+  return (
+    <Link
+      href={`/products/${product.slug}`}
+      className="group block overflow-hidden rounded-2xl border border-gold/20 bg-white transition-all duration-300 hover:-translate-y-1 hover:shadow-xl"
+    >
+      <div className="relative aspect-square overflow-hidden bg-champagne">
+        {img ? (
+          <Image
+            src={img}
+            alt={product.name}
+            fill
+            className="object-cover transition-transform duration-500 group-hover:scale-105"
+          />
+        ) : (
+          <div className="flex h-full w-full items-center justify-center text-maroon/30">
+            <LeafIcon className="h-12 w-12" />
+          </div>
+        )}
+
+        {outOfStock && (
+          <span className="absolute left-3 top-3 rounded-full bg-maroon px-3 py-1 text-[10px] font-bold uppercase tracking-wide text-white">
+            Out of Stock
+          </span>
+        )}
       </div>
+
       <div className="p-4">
-        <p className="font-display text-lg text-ink leading-snug line-clamp-2">{product.name}</p>
-        {product.weight && <p className="text-xs text-ink/50 mt-1">{product.weight}</p>}
-        <div className="mt-2 flex items-baseline gap-2">
-          <span className="font-bold text-maroon">₹{product.price}</span>
-          {product.compareAtPrice > product.price && <span className="text-xs text-ink/40 line-through">₹{product.compareAtPrice}</span>}
+        <h3 className="line-clamp-2 font-display text-lg font-semibold text-maroon">
+          {product.name}
+        </h3>
+
+        {product.unit && (
+          <p className="mt-1 text-xs text-gray-500">
+            {product.unit}
+          </p>
+        )}
+
+        <div className="mt-3 flex items-center gap-2">
+          <span className="text-lg font-bold text-maroon">
+            ₹{product.price}
+          </span>
+
+          {product.compareAtPrice > product.price && (
+            <span className="text-sm text-gray-400 line-through">
+              ₹{product.compareAtPrice}
+            </span>
+          )}
         </div>
       </div>
-    </Link>;
+    </Link>
+  );
 }
