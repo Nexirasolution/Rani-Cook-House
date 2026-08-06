@@ -48,7 +48,7 @@ export default async function ProductDetailPage({ params }) {
       content:
         product.description ||
         product.shortDescription ||
-        "A premium handcrafted product from KMC Iyarkai Creation, made with natural, eco-friendly materials.",
+        "A premium homemade product from Rani's Cook Food, prepared with authentic ingredients and traditional recipes.",
     },
     {
       title: "Product Details",
@@ -75,7 +75,7 @@ export default async function ProductDetailPage({ params }) {
           {media.length > 0 ? (
             <ProductGallery media={media} productName={product.name} />
           ) : (
-            <div className="aspect-square overflow-hidden rounded-xl2 bg-champagne shadow-card flex items-center justify-center text-forest/30">
+            <div className="aspect-square overflow-hidden rounded-xl2 bg-champagne shadow-card flex items-center justify-center text-maroon/30">
               <LeafIcon className="h-16 w-16" />
             </div>
           )}
@@ -84,10 +84,14 @@ export default async function ProductDetailPage({ params }) {
             <p className="text-xs font-semibold uppercase tracking-[0.25em] text-gold-dark">
               {product.category?.name}
             </p>
-            <h1 cl<h1 className="mt-2 font-display text-3xl font-bold text-maroon md:text-4xl">assName="mt-2 font-display text-3xl font-bold text-forest md:text-4xl">{product.name}</h1>
+            <h1 className="mt-2 font-display text-3xl font-bold text-maroon md:text-4xl">
+              {product.name}
+            </h1>
 
             <div className="mt-4 flex items-baseline gap-3">
-              <span className="font-display text-3xl font-bold text-forest">₹{product.price}</span>
+              <span className="font-display text-3xl font-bold text-maroon">
+                ₹{product.price}
+              </span>
               {product.compareAtPrice > product.price && (
                 <span className="text-base text-muted line-through">₹{product.compareAtPrice}</span>
               )}
@@ -111,7 +115,7 @@ export default async function ProductDetailPage({ params }) {
 
 function Tag({ label }) {
   return (
-    <span className="rounded-full border border-gold/30 bg-champagne px-3 py-1 text-xs font-medium text-forest">
+    <span className="rounded-full border border-maroon/20 bg-maroon/10 px-3 py-1 text-xs font-medium text-maroon">
       {label}
     </span>
   );
