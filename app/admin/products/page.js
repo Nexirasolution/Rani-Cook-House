@@ -280,7 +280,7 @@ export default function AdminProductsPage() {
                   onClick={() => goToPage(p)}
                   className={`h-8 w-8 rounded-full text-xs font-semibold transition ${
                     p === page
-                      ? "bg-forest text-ivory"
+                      ? "bg-maroon text-ivory"
                       : "border border-gold/30 text-ink/70 hover:bg-champagne"
                   }`}
                 >

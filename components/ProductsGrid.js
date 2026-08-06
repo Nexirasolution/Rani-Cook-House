@@ -98,7 +98,7 @@ export default function ProductsGrid({ initialCategory, initialSearch }) {
             onClick={() => setActiveCategory("")}
             className={`rounded-full border px-4 py-2 text-xs font-semibold transition ${
               activeCategory === ""
-                ? "border-forest bg-forest text-ivory"
+                ? "border-maroon bg-maroon text-ivory"
                 : "border-gold/30 text-ink/70 hover:bg-champagne"
             }`}
           >
@@ -112,7 +112,7 @@ export default function ProductsGrid({ initialCategory, initialSearch }) {
                 onClick={() => setActiveCategory(cat._id)}
                 className={`flex items-center gap-1.5 rounded-full border px-4 py-2 text-xs font-semibold transition ${
                   activeCategory === cat._id
-                    ? "border-forest bg-forest text-ivory"
+                    ? "border-maroon bg-maroon text-ivory"
                     : "border-gold/30 text-ink/70 hover:bg-champagne"
                 }`}
               >
@@ -199,7 +199,7 @@ export default function ProductsGrid({ initialCategory, initialSearch }) {
         </div>
       ) : products.length === 0 ? (
         <div className="py-20 text-center">
-          <p className="font-display text-lg text-forest">No products found</p>
+          <p className="font-display text-lg text-maroon">No products found</p>
           <p className="mt-1 text-sm text-muted">Try a different category or search term.</p>
         </div>
       ) : (
@@ -237,7 +237,7 @@ export default function ProductsGrid({ initialCategory, initialSearch }) {
                       onClick={() => goToPage(p)}
                       className={`h-8 w-8 rounded-full text-xs font-semibold transition ${
                         p === page
-                          ? "bg-forest text-ivory"
+                          ? "bg-maroon text-ivory"
                           : "border border-gold/30 text-ink/70 hover:bg-champagne"
                       }`}
                     >

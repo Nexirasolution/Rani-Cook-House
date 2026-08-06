@@ -28,7 +28,7 @@ export default function CheckoutPage() {
     shippingFee: 49,
     freeShipping: 999,
     stateShippingRates: [],
-    storeName: "KMC Iyarkai Creation",
+    storeName: "Rani's Cook Food",
   });
 
   useEffect(() => {
@@ -131,7 +131,7 @@ export default function CheckoutPage() {
           contact: form.phone,
           email: form.email,
         },
-        theme: { color: "#1f3d2b" }, // forest color
+        theme: { color: "#800000" }, // maroon color
         handler: async function (response) {
           try {
             const verifyRes = await fetch("/api/razorpay/verify", {
@@ -191,10 +191,10 @@ export default function CheckoutPage() {
       <>
         <Navbar settings={settings} />
         <section className="mx-auto max-w-xl px-5 py-20 text-center md:px-8">
-          <span className="badge-stamp mx-auto flex h-16 w-16 items-center justify-center border-gold/40 bg-forest text-ivory">
+          <span className="badge-stamp mx-auto flex h-16 w-16 items-center justify-center border-gold/40 bg-maroon text-ivory">
             ✓
           </span>
-          <h1 className="mt-6 font-display text-3xl font-bold text-forest">Order Placed!</h1>
+          <h1 className="mt-6 font-display text-3xl font-bold text-maroon">Order Placed!</h1>
           <p className="mt-3 text-muted">
             Thank you for choosing {settings.storeName || "KMC Iyarkai Creation"}. Your order number is:
           </p>
@@ -205,13 +205,13 @@ export default function CheckoutPage() {
           <div className="mt-8 flex justify-center gap-4">
             
             <a  href="/track-order"
-              className="rounded-full border border-forest/30 px-8 py-3 text-sm font-semibold text-forest hover:bg-champagne"
+              className="rounded-full border border-maroon/30 px-8 py-3 text-sm font-semibold text-maroon hover:bg-champagne"
             >
               Track Order
             </a>
             
              <a href="/products"
-              className="rounded-full bg-forest px-8 py-3 text-sm font-semibold text-ivory shadow-soft hover:bg-forest-light"
+              className="rounded-full bg-maroon px-8 py-3 text-sm font-semibold text-ivory shadow-soft hover:bg-maroon/90"
             >
               Continue Shopping
             </a>
@@ -227,10 +227,10 @@ export default function CheckoutPage() {
       <Script src="https://checkout.razorpay.com/v1/checkout.js" strategy="lazyOnload" />
       <Navbar settings={settings} />
       <section className="mx-auto max-w-4xl px-5 py-12 md:px-8">
-        <h1 className="font-display text-3xl font-bold text-forest">Checkout</h1>
+        <h1 className="font-display text-3xl font-bold text-maroon">Checkout</h1>
 
         {items.length === 0 ? (
-          <p className="mt-8 text-muted">Your cart is empty. <a href="/products" className="text-forest underline">Shop now</a></p>
+          <p className="mt-8 text-muted">Your cart is empty. <a href="/products" className="text-maroon underline">Shop now</a></p>
         ) : (
           <form onSubmit={handleSubmit} className="mt-8 grid gap-10 md:grid-cols-3">
             <div className="space-y-4 md:col-span-2">
@@ -270,7 +270,7 @@ export default function CheckoutPage() {
                       onClick={() => setPaymentMethod(m)}
                       className={`rounded-full border px-5 py-2 text-xs font-semibold transition ${
                         paymentMethod === m
-                          ? "border-forest bg-forest text-ivory"
+                          ? "border-maroon bg-maroon text-ivory"
                           : "border-gold/30 text-ink/70 hover:bg-champagne"
                       }`}
                     >
@@ -289,7 +289,7 @@ export default function CheckoutPage() {
             </div>
 
             <div className="h-fit rounded-xl2 border border-gold/15 bg-white p-6 shadow-card">
-              <h2 className="font-display text-lg font-bold text-forest">Order Summary</h2>
+              <h2 className="font-display text-lg font-bold text-maroon">Order Summary</h2>
               <div className="mt-4 space-y-2">
                 {items.map((item) => (
                   <div key={item.productId} className="flex justify-between text-sm text-ink/80">
@@ -307,14 +307,14 @@ export default function CheckoutPage() {
                 <span>Shipping ({form.state})</span>
                 <span>{shippingFee === 0 ? "Free" : `₹${shippingFee}`}</span>
               </div>
-              <div className="mt-2 flex justify-between font-display text-base font-bold text-forest">
+              <div className="mt-2 flex justify-between font-display text-base font-bold text-maroon">
                 <span>Total</span>
                 <span>₹{total}</span>
               </div>
               <button
                 type="submit"
                 disabled={loading}
-                className="mt-6 w-full rounded-full bg-forest px-8 py-3.5 text-sm font-semibold text-ivory shadow-soft transition hover:bg-forest-light disabled:opacity-60"
+                className="mt-6 w-full rounded-full bg-maroon px-8 py-3.5 text-sm font-semibold text-ivory shadow-soft transition hover:bg-maroon/90 disabled:opacity-60"
               >
                 {loading ? "Processing..." : paymentMethod === "COD" ? "Place Order" : "Pay & Place Order"}
               </button>

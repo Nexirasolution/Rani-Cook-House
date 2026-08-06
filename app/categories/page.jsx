@@ -147,7 +147,7 @@ function PageLink({ page, label, active, disabled }) {
       href={page <= 1 ? "/categories" : `/categories?page=${page}`}
       className={`rounded-full px-4 py-2 text-sm font-medium transition ${
         active
-          ? "bg-forest text-ivory"
+          ? "bg-maroon text-ivory"
           : "text-ink/70 hover:bg-champagne"
       }`}
     >

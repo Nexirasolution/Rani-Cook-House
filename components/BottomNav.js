@@ -14,17 +14,18 @@ const NAV_ITEMS = [
 export default function BottomNav() {
   const pathname = usePathname();
 
-  // Hide entirely on admin routes
+  // Hide on admin pages
   if (pathname?.startsWith("/admin")) return null;
 
   return (
-    <nav className="fixed bottom-0 left-0 right-0 z-50 border-t border-gold/15 bg-white shadow-[0_-2px_10px_rgba(0,0,0,0.06)] md:hidden">
+    <nav className="fixed bottom-0 left-0 right-0 z-50 border-t border-maroon/20 bg-white shadow-[0_-2px_10px_rgba(0,0,0,0.06)] md:hidden">
       <div className="grid grid-cols-4">
         {NAV_ITEMS.map((item) => {
           const isActive =
             item.href === "/"
               ? pathname === "/"
               : pathname?.startsWith(item.href);
+
           const Icon = item.icon;
 
           return (
@@ -32,14 +33,16 @@ export default function BottomNav() {
               key={item.href}
               href={item.href}
               className={`flex flex-col items-center justify-center gap-1 py-2.5 text-[11px] font-medium transition ${
-                isActive ? "text-forest" : "text-muted"
+                isActive
+                  ? "text-maroon"
+                  : "text-gray-500 hover:text-maroon"
               }`}
             >
               <Icon
                 className="h-5 w-5"
                 strokeWidth={isActive ? 2.4 : 2}
               />
-              {item.label}
+              <span>{item.label}</span>
             </Link>
           );
         })}

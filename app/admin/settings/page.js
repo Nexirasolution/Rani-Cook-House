@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { INDIAN_STATES } from "@/lib/indianStates";
 
 const DEFAULT_SETTINGS = {
-  storeName: "KMC Iyarkai Creation",
+  storeName: "Rani's Cook Food",
   email: "admin@kmcorganicfarm.com",
   phone: "",
   whatsapp: "",

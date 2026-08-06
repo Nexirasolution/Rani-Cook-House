@@ -88,7 +88,7 @@ export default function TrackOrderPage() {
           <button
             type="submit"
             disabled={loading}
-            className="rounded-full bg-forest px-8 py-3 text-sm font-semibold text-ivory shadow-soft transition hover:bg-forest-light disabled:opacity-60"
+            className="rounded-full bg-maroon px-8 py-3 text-sm font-semibold text-ivory shadow-soft transition hover:bg-maroon/90 disabled:opacity-60"
           >
             {loading ? "Searching..." : "Track"}
           </button>
@@ -102,12 +102,12 @@ export default function TrackOrderPage() {
               <div key={order._id} className="rounded-xl2 border border-gold/15 bg-white p-6 shadow-card">
                 <div className="flex flex-wrap items-center justify-between gap-2">
                   <div>
-                    <p className="font-display text-lg font-bold text-forest">{order.orderNumber}</p>
+                    <p className="font-display text-lg font-bold text-maroon">{order.orderNumber}</p>
                     <p className="text-xs text-muted">
                       Placed on {new Date(order.createdAt).toLocaleDateString("en-IN", { day: "numeric", month: "short", year: "numeric" })}
                     </p>
                   </div>
-                  <span className="rounded-full bg-champagne px-4 py-1.5 text-xs font-semibold text-forest">
+                  <span className="rounded-full bg-maroon/10 px-4 py-1.5 text-xs font-semibold text-maroon">
                     {STATUS_LABELS[order.status]}
                   </span>
                 </div>
@@ -121,11 +121,11 @@ export default function TrackOrderPage() {
                         <div key={step} className="flex flex-1 flex-col items-center">
                           <div className="flex w-full items-center">
                             {idx !== 0 && (
-                              <div className={`h-0.5 flex-1 ${idx <= currentIdx ? "bg-forest" : "bg-gold/20"}`} />
+                              <div className={`h-0.5 flex-1 ${idx <= currentIdx ? "bg-maroon" : "bg-gold/20"}`} />
                             )}
                             <span
                               className={`flex h-7 w-7 shrink-0 items-center justify-center rounded-full text-[10px] font-bold ${
-                                done ? "bg-forest text-ivory" : "bg-champagne text-muted"
+                                done ? "bg-maroon text-ivory" : "bg-champagne text-muted"
                               }`}
                             >
                               {idx + 1}
@@ -186,7 +186,7 @@ export default function TrackOrderPage() {
                     </div>
                   ))}
                 </div>
-                <div className="mt-3 flex justify-between font-display text-sm font-bold text-forest">
+                <div className="mt-3 flex justify-between font-display text-sm font-bold text-maroon">
                   <span>Total</span>
                   <span>₹{order.total}</span>
                 </div>
@@ -200,7 +200,7 @@ export default function TrackOrderPage() {
 
         {!orders && !error && (
           <div className="mt-16 flex flex-col items-center text-center text-muted">
-            <LeafIcon className="h-10 w-10 text-forest/20" />
+            <LeafIcon className="h-10 w-10 text-maroon/20" />
             <p className="mt-3 text-sm">Your order history will appear here.</p>
           </div>
         )}
