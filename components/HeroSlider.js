@@ -11,7 +11,7 @@ const playfair = Playfair_Display({
 
 export default function HeroSlider() {
   return (
-    <section className="relative h-[65vh] overflow-hidden sm:h-[75vh] lg:h-screen">
+    <section className="relative h-[55vh] overflow-hidden sm:h-[65vh] lg:h-[75vh]">
       {/* Background */}
       <Image
         src="/hero/hero-banner.png"
