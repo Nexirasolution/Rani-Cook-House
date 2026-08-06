@@ -84,7 +84,7 @@ export default async function ProductDetailPage({ params }) {
             <p className="text-xs font-semibold uppercase tracking-[0.25em] text-gold-dark">
               {product.category?.name}
             </p>
-            <h1 className="mt-2 font-display text-3xl font-bold text-forest md:text-4xl">{product.name}</h1>
+            <h1 cl<h1 className="mt-2 font-display text-3xl font-bold text-maroon md:text-4xl">assName="mt-2 font-display text-3xl font-bold text-forest md:text-4xl">{product.name}</h1>
 
             <div className="mt-4 flex items-baseline gap-3">
               <span className="font-display text-3xl font-bold text-forest">₹{product.price}</span>

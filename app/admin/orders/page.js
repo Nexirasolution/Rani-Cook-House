@@ -7,12 +7,12 @@ import Modal from "@/components/Modal";
 const STATUSES = ["pending", "confirmed", "packed", "shipped", "delivered", "cancelled"];
 
 const STATUS_COLORS = {
-  pending: "bg-gold/20 text-gold-dark",
-  confirmed: "bg-forest/10 text-forest",
-  packed: "bg-forest/10 text-forest",
-  shipped: "bg-terracotta/10 text-terracotta",
-  delivered: "bg-forest text-ivory",
-  cancelled: "bg-muted/10 text-muted",
+  pending: "bg-gold/20 text-goldDark",
+  confirmed: "bg-maroon/10 text-maroon",
+  packed: "bg-maroon/10 text-maroon",
+  shipped: "bg-clay/10 text-clay",
+  delivered: "bg-maroon text-white",
+  cancelled: "bg-gray-100 text-gray-600",
 };
 
 const EMPTY_TRACKING = { courier: "", trackingNumber: "", trackingUrl: "" };
@@ -105,7 +105,7 @@ export default function AdminOrdersPage() {
     <div>
       <div className="flex flex-wrap items-center justify-between gap-4">
         <div>
-          <h1 className="font-display text-2xl font-bold text-forest">Orders</h1>
+          <h1 className="font-display text-2xl font-bold text-maroon">Orders</h1>
           <p className="mt-1 text-sm text-muted">{orders.length} orders</p>
         </div>
         <input
@@ -113,14 +113,14 @@ export default function AdminOrdersPage() {
           placeholder="Search by name, phone, order #..."
           value={search}
           onChange={(e) => setSearch(e.target.value)}
-          className="w-full rounded-full border border-gold/30 bg-white px-4 py-2 text-sm outline-none focus:border-forest sm:w-72"
+          className="w-full rounded-full border border-gold/30 bg-white px-4 py-2 text-sm outline-none focus:border-maroon sm:w-72"
         />
       </div>
 
       <div className="mt-4 flex flex-wrap gap-2">
         <button
           onClick={() => setFilter("")}
-          className={`rounded-full border px-4 py-1.5 text-xs font-semibold ${filter === "" ? "border-forest bg-forest text-ivory" : "border-gold/30 text-ink/70"}`}
+          className={`rounded-full border px-4 py-1.5 text-xs font-semibold ${filter === "" ? "border-maroon bg-maroon text-white" : "border-gold/30 text-ink/70"}`}
         >
           All
         </button>
@@ -128,7 +128,7 @@ export default function AdminOrdersPage() {
           <button
             key={s}
             onClick={() => setFilter(s)}
-            className={`rounded-full border px-4 py-1.5 text-xs font-semibold capitalize ${filter === s ? "border-forest bg-forest text-ivory" : "border-gold/30 text-ink/70"}`}
+            className={`rounded-full border px-4 py-1.5 text-xs font-semibold capitalize ${filter === s ? "border-foresborder-maroon bg-maroon text-whitet bg-forest text-ivory" : "border-gold/30 text-ink/70"}`}
           >
             {s}
           </button>
@@ -177,7 +177,7 @@ export default function AdminOrdersPage() {
                       >
                         Print label
                       </Link>
-                      <button onClick={() => setSelected(o)} className="text-xs font-semibold text-forest hover:underline">
+                      <button onClick={() => setSelected(o)} className="text-xs font-semibold text-maroon hover:underline">
                         View
                       </button>
                     </div>
@@ -216,7 +216,7 @@ export default function AdminOrdersPage() {
                   <span className="text-muted">
                     {new Date(o.createdAt).toLocaleDateString("en-IN", { day: "numeric", month: "short" })}
                   </span>
-                  <span className="font-semibold text-forest">₹{o.total}</span>
+                  <span className="font-semibold text-maroon">₹{o.total}</span>
                 </div>
               </button>
 
@@ -285,7 +285,7 @@ export default function AdminOrdersPage() {
                 </div>
               ))}
             </div>
-            <div className="mt-3 flex justify-between gap-3 border-t border-gold/15 pt-3 font-display text-sm font-bold text-forest">
+            <div className="mt-3 flex justify-between gap-3 border-t border-gold/15 pt-3 font-display text-sm font-bold text-maroon">
               <span>Total ({selected.paymentMethod})</span>
               <span>₹{selected.total}</span>
             </div>
@@ -308,7 +308,7 @@ export default function AdminOrdersPage() {
                   disabled={updating || selected.status === s}
                   onClick={() => updateStatus(selected._id, s)}
                   className={`rounded-full border px-4 py-2 text-xs font-semibold capitalize transition disabled:cursor-default sm:py-1.5 ${
-                    selected.status === s ? "border-forest bg-forest text-ivory" : "border-gold/30 text-ink/70 hover:bg-champagne"
+                    selected.status === s ? "border-maroon bg-maroon text-white" : "border-gold/30 text-ink/70 hover:bg-champagne"
                   }`}
                 >
                   {s}
@@ -330,7 +330,7 @@ export default function AdminOrdersPage() {
                   placeholder="e.g. Delhivery, India Post"
                   value={tracking.courier}
                   onChange={(e) => setTracking((t) => ({ ...t, courier: e.target.value }))}
-                  className="mt-1 w-full rounded-full border border-gold/30 bg-white px-4 py-2 text-sm outline-none focus:border-forest"
+                  className="mt-1 w-full rounded-full border border-gold/30 bg-white px-4 py-2 text-sm outline-none focus:border-maroon"
                 />
               </div>
               <div>
@@ -340,7 +340,7 @@ export default function AdminOrdersPage() {
                   placeholder="e.g. 1234567890"
                   value={tracking.trackingNumber}
                   onChange={(e) => setTracking((t) => ({ ...t, trackingNumber: e.target.value }))}
-                  className="mt-1 w-full rounded-full border border-gold/30 bg-white px-4 py-2 text-sm outline-none focus:border-forest"
+                  className="mt-1 w-full rounded-full border border-gold/30 bg-white px-4 py-2 text-sm outline-none focus:border-maroon"
                 />
               </div>
               <div className="sm:col-span-2">
@@ -350,7 +350,7 @@ export default function AdminOrdersPage() {
                   placeholder="https://courier-site.com/track/..."
                   value={tracking.trackingUrl}
                   onChange={(e) => setTracking((t) => ({ ...t, trackingUrl: e.target.value }))}
-                  className="mt-1 w-full rounded-full border border-gold/30 bg-white px-4 py-2 text-sm outline-none focus:border-forest"
+                  className="mt-1 w-full rounded-full border border-gold/30 bg-white px-4 py-2 text-sm outline-none focus:border-maroon"
                 />
               </div>
             </div>
@@ -362,7 +362,7 @@ export default function AdminOrdersPage() {
               >
                 {updating ? "Saving..." : "Save tracking"}
               </button>
-              {trackingSaved && <span className="text-xs font-medium text-forest">Saved ✓</span>}
+              {trackingSaved && <span className="text-xs font-medium text-maroon">Saved ✓</span>}
             </div>
           </div>
         )}

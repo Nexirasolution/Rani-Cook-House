@@ -1,73 +1,121 @@
-import mongoose from "mongoose";
+import { Schema, models, model } from "mongoose";
 
-const MediaSchema = new mongoose.Schema(
+const ProductSchema = new Schema(
   {
-    url: {
-      type: String,
-      required: true,
-    },
-    publicId: {
-      type: String,
-      required: true,
-    },
-    type: {
-      type: String,
-      enum: ["image", "video"],
-      default: "image",
-    },
-  },
-  { _id: false }
-);
-
-const ProductSchema = new mongoose.Schema(
-  {
-    name: { type: String, required: true, trim: true },
-    slug: { type: String, required: true, unique: true, lowercase: true, trim: true },
     sku: {
       type: String,
       required: true,
       unique: true,
       trim: true,
-      uppercase: true,
     },
-    description: { type: String, default: "" },
-    shortDescription: { type: String, default: "" },
+
+    name: {
+      type: String,
+      required: true,
+      trim: true,
+    },
+
+    slug: {
+      type: String,
+      required: true,
+      unique: true,
+    },
+
+    description: {
+      type: String,
+      default: "",
+    },
+
+
     category: {
-      type: mongoose.Schema.Types.ObjectId,
+      type: Schema.Types.ObjectId,
       ref: "Category",
       required: true,
     },
-    price: { type: Number, required: true },
-    compareAtPrice: { type: Number, default: 0 },
-    unit: { type: String, default: "piece" },
 
-    // Images + Videos
-    media: {
-      type: [MediaSchema],
-      default: [],
+
+    price: {
+      type: Number,
+      required: true,
     },
 
-    stock: { type: Number, default: 0 },
-    lowStockThreshold: { type: Number, default: 5 },
-    tags: { type: [String], default: [] },
 
-    isFeatured: { type: Boolean, default: false },
-    isActive: { type: Boolean, default: true },
-
-    attributes: {
-      handmade: { type: Boolean, default: true },
-      natural: { type: Boolean, default: true },
-      ecoFriendly: { type: Boolean, default: true },
+    compareAtPrice: {
+      type: Number,
+      default: 0,
     },
+
+
+    // ✅ Your MediaUploader uses this
+    media: [
+      {
+        url: {
+          type: String,
+          required: true,
+        },
+
+        publicId: {
+          type: String,
+          default: "",
+        },
+
+        type: {
+          type: String,
+          default: "image",
+        },
+      },
+    ],
+
+
+    unit: {
+      type: String,
+      default: "piece",
+    },
+
+
+    stock: {
+      type: Number,
+      default: 0,
+    },
+
+
+    lowStockThreshold: {
+      type: Number,
+      default: 5,
+    },
+
+
+    // ✅ Homepage featured checkbox
+    isFeatured: {
+      type: Boolean,
+      default: false,
+    },
+
+
+    // ✅ Store visibility checkbox
+    isActive: {
+      type: Boolean,
+      default: true,
+    },
+
+
+    soldCount: {
+      type: Number,
+      default: 0,
+    },
+
   },
-  { timestamps: true }
+  {
+    timestamps: true,
+  }
 );
+
 
 ProductSchema.index({
   name: "text",
-  description: "text",
-  tags: "text",
+  sku: "text",
 });
 
-export default mongoose.models.Product ||
-  mongoose.model("Product", ProductSchema);
+
+export default models.Product ||
+  model("Product", ProductSchema);

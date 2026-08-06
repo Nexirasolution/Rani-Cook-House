@@ -122,12 +122,12 @@ export default function AdminBannersPage() {
     <div>
       <div className="flex flex-wrap items-center justify-between gap-4">
         <div>
-          <h1 className="font-display text-2xl font-bold text-forest">Banners</h1>
+          <h1 className="font-display text-2xl font-bold text-maroon">Banners</h1>
           <p className="mt-1 text-sm text-muted">{banners.length} banners</p>
         </div>
         <button
           onClick={openAdd}
-          className="rounded-full bg-forest px-6 py-2 text-sm font-semibold text-ivory shadow-soft hover:bg-forest-light"
+          className="rounded-full bg-maroon px-6 py-2 text-sm font-semibold text-white shadow-soft hover:bg-maroonDark"
         >
           + Add Banner
         </button>
@@ -170,7 +170,7 @@ export default function AdminBannersPage() {
                       <p className="mt-1 line-clamp-2 text-sm text-muted">{b.subtitle}</p>
                     )}
                     {b.ctaText && (
-                      <p className="mt-1 text-xs text-gold-dark font-medium">
+                      <p className="mt-1 text-xs text-maroon font-medium">
                         CTA: {b.ctaText} → {b.ctaLink || "(no link)"}
                       </p>
                     )}
@@ -180,9 +180,11 @@ export default function AdminBannersPage() {
                 <div className="flex items-center justify-end gap-4">
                   <button
                     onClick={() => toggleActive(b)}
-                    className={`rounded-full px-3 py-1 text-xs font-medium ${
-                      b.isActive ? "bg-forest/10 text-forest" : "bg-muted/10 text-muted"
-                    }`}
+                  className={`rounded-full px-3 py-1 text-xs font-medium ${
+  b.isActive
+    ? "bg-maroon/10 text-maroon"
+    : "bg-muted/10 text-muted"
+}`}
                   >
                     {b.isActive ? "Active" : "Hidden"}
                   </button>
@@ -190,7 +192,7 @@ export default function AdminBannersPage() {
                   <button
                     title="Edit"
                     onClick={() => openEdit(b)}
-                    className="text-forest hover:scale-110 transition"
+                    className="text-maroon hover:scale-110 transition"
                   >
                     ✏️
                   </button>
@@ -221,7 +223,7 @@ export default function AdminBannersPage() {
               required
               value={form.title}
               onChange={(e) => setForm({ ...form, title: e.target.value })}
-              className="w-full rounded-xl border border-gold/30 px-4 py-2.5 text-sm outline-none focus:border-forest"
+              className="w-full rounded-xl border border-gold/30 px-4 py-2.5 text-sm outline-none focus:border-maroon"
             />
           </label>
 
@@ -231,7 +233,7 @@ export default function AdminBannersPage() {
               rows={2}
               value={form.subtitle}
               onChange={(e) => setForm({ ...form, subtitle: e.target.value })}
-              className="w-full rounded-xl border border-gold/30 px-4 py-2.5 text-sm outline-none focus:border-forest"
+              className="w-full rounded-xl border border-gold/30 px-4 py-2.5 text-sm outline-none focus:border-maroon"
             />
           </label>
 
@@ -252,7 +254,7 @@ export default function AdminBannersPage() {
                 value={form.ctaText}
                 onChange={(e) => setForm({ ...form, ctaText: e.target.value })}
                 placeholder="e.g. Shop Now"
-                className="w-full rounded-xl border border-gold/30 px-4 py-2.5 text-sm outline-none focus:border-forest"
+                className="w-full rounded-xl border border-gold/30 px-4 py-2.5 text-sm outline-none focus:border-maroon"
               />
             </label>
 
@@ -262,7 +264,7 @@ export default function AdminBannersPage() {
                 value={form.ctaLink}
                 onChange={(e) => setForm({ ...form, ctaLink: e.target.value })}
                 placeholder="/products or https://..."
-                className="w-full rounded-xl border border-gold/30 px-4 py-2.5 text-sm outline-none focus:border-forest"
+                className="w-full rounded-xl border border-gold/30 px-4 py-2.5 text-sm outline-none focus:border-maroon"
               />
             </label>
           </div>
@@ -273,7 +275,7 @@ export default function AdminBannersPage() {
               type="number"
               value={form.sortOrder}
               onChange={(e) => setForm({ ...form, sortOrder: e.target.value })}
-              className="w-full rounded-xl border border-gold/30 px-4 py-2.5 text-sm outline-none focus:border-forest"
+              className="w-full rounded-xl border border-gold/30 px-4 py-2.5 text-sm outline-none focus:border-maroon"
             />
           </label>
 
@@ -291,7 +293,7 @@ export default function AdminBannersPage() {
           <button
             type="submit"
             disabled={saving}
-            className="w-full rounded-full bg-forest px-8 py-3 text-sm font-semibold text-ivory shadow-soft hover:bg-forest-light disabled:opacity-60"
+            className="w-full rounded-full bg-maroon px-8 py-3 text-sm font-semibold text-white shadow-soft hover:bg-maroonDark disabled:opacity-60"
           >
             {saving ? "Saving..." : editingId ? "Save Changes" : "Add Banner"}
           </button>

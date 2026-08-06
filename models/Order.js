@@ -1,79 +1,74 @@
-// models/Order.js
-import mongoose from "mongoose";
-
-const OrderItemSchema = new mongoose.Schema(
-  {
-    product: { type: mongoose.Schema.Types.ObjectId, ref: "Product" },
-    name: { type: String, required: true },
-    sku: { type: String, default: "" },
-    image: { type: String, default: "" },
-    price: { type: Number, required: true },
-    quantity: { type: Number, required: true, min: 1 },
-    unit: { type: String, default: "piece" },
+import { Schema, models, model } from "mongoose";
+const OrderItemSchema = new Schema({
+  product: {
+    type: Schema.Types.ObjectId,
+    ref: "Product"
   },
-  { _id: false }
-);
-
-const TrackingSchema = new mongoose.Schema(
-  {
-    courier: { type: String, default: "" },
-    trackingNumber: { type: String, default: "" },
-    trackingUrl: { type: String, default: "" },
-    updatedAt: { type: Date, default: null },
+  name: String,
+  image: String,
+  price: Number,
+  quantity: Number
+}, {
+  _id: false
+});
+const OrderSchema = new Schema({
+  orderNumber: {
+    type: String,
+    required: true,
+    unique: true
   },
-  { _id: false }
-);
-
-const OrderSchema = new mongoose.Schema(
-  {
-    orderNumber: { type: String, required: true, unique: true },
-    customer: {
-      name: { type: String, required: true },
-      phone: { type: String, required: true, index: true },
-      email: { type: String, default: "" },
-      address: { type: String, required: true },
-      city: { type: String, default: "" },
-      state: { type: String, default: "Tamil Nadu" },
-      pincode: { type: String, default: "" },
-    },
-    items: { type: [OrderItemSchema], required: true },
-    subtotal: { type: Number, required: true },
-    shippingFee: { type: Number, default: 0 },
-    total: { type: Number, required: true },
-    paymentMethod: {
+  items: [OrderItemSchema],
+  customer: {
+    name: {
       type: String,
-      enum: ["COD", "UPI", "Online"],
-      default: "COD",
+      required: true
     },
-    paymentStatus: {
+    phone: {
       type: String,
-      enum: ["pending", "paid", "failed"],
-      default: "pending",
+      required: true
     },
-    razorpay: {
-      orderId: { type: String, default: "" },
-      paymentId: { type: String, default: "" },
-      signature: { type: String, default: "" },
-    },
-    status: {
+    email: {
       type: String,
-      enum: ["pending", "confirmed", "packed", "shipped", "delivered", "cancelled"],
-      default: "pending",
-    },
-    statusHistory: {
-      type: [
-        {
-          status: String,
-          note: String,
-          at: { type: Date, default: Date.now },
-        },
-      ],
-      default: [],
-    },
-    tracking: { type: TrackingSchema, default: () => ({}) },
-    notes: { type: String, default: "" },
+      default: ""
+    }
   },
-  { timestamps: true }
-);
-
-export default mongoose.models.Order || mongoose.model("Order", OrderSchema);
+  shippingAddress: {
+    line1: String,
+    city: String,
+    state: String,
+    pincode: String
+  },
+  subtotal: {
+    type: Number,
+    required: true
+  },
+  shippingFee: {
+    type: Number,
+    default: 0
+  },
+  total: {
+    type: Number,
+    required: true
+  },
+  status: {
+    type: String,
+    enum: ["Pending", "Confirmed", "Packed", "Shipped", "Delivered", "Cancelled"],
+    default: "Pending"
+  },
+  paymentMethod: {
+    type: String,
+    enum: ["COD", "Prepaid"],
+    default: "COD"
+  },
+  trackingId: {
+    type: String,
+    default: ""
+  },
+  notes: {
+    type: String,
+    default: ""
+  }
+}, {
+  timestamps: true
+});
+export default models.Order || model("Order", OrderSchema);

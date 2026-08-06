@@ -1,40 +1,33 @@
-import mongoose from "mongoose";
+import { Schema, models, model } from "mongoose";
 
-const StateShippingRateSchema = new mongoose.Schema(
-  {
-    state: { type: String, required: true, trim: true },
-    fee: { type: Number, required: true, default: 0 },
-  },
+const StateShippingSchema = new Schema(
+  { state: String, fee: Number },
   { _id: false }
 );
 
-const SettingsSchema = new mongoose.Schema(
+const SettingsSchema = new Schema(
   {
-    storeName: { type: String, default: "KMC Iyarkai Creation" },
-    email: { type: String, default: "" },
-    phone: { type: String, default: "" },
-    whatsapp: { type: String, default: "" },
-    address: { type: String, default: "" },
-
-    // Default/fallback fee used when the customer's state has no specific rate below.
-    shippingFee: { type: Number, default: 49 },
-    // Order subtotal (₹) at or above which shipping is free, regardless of state.
-    freeShipping: { type: Number, default: 999 },
-    // Per-state overrides. Any state not listed here falls back to `shippingFee`.
-    stateShippingRates: { type: [StateShippingRateSchema], default: [] },
-
-    deliveryTime: { type: String, default: "2-4 Days" },
-
+    storeName: { type: String, default: "Rani's Cook House" },
+    email: { type: String, default: "ranipickles13@gmail.com" },
+    phone: { type: String, default: "7418058533" },
+    whatsapp: { type: String, default: "917418058533" },
+    deliveryTime: { type: String, default: "3-5 Days" },
+    address: { type: String, default: "Nagercoil, Tamil Nadu" },
+    defaultShippingFee: { type: Number, default: 79 },
+    freeShippingAbove: { type: Number, default: 999 },
+    stateShipping: [StateShippingSchema],
     instagram: { type: String, default: "" },
     facebook: { type: String, default: "" },
     youtube: { type: String, default: "" },
-
-    seoTitle: { type: String, default: "KMC Iyarkai Creation" },
-    seoDescription: { type: String, default: "" },
-
+    seoTitle: { type: String, default: "Rani's Cook House | Mom's Secret Taste — Homemade Pickles & Snacks" },
+    seoDescription: {
+      type: String,
+      default:
+        "Rani's Cook House offers homemade pickles, dry fish powder, avalose podi (fried rice powder), sangu sathai (conch meat) and dry fruits & nuts from Nagercoil, Tamil Nadu. Mom's secret taste, delivered across India.",
+    },
     maintenanceMode: { type: Boolean, default: false },
   },
   { timestamps: true }
 );
 
-export default mongoose.models.Settings || mongoose.model("Settings", SettingsSchema);
+export default models.Settings || model("Settings", SettingsSchema);

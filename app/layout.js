@@ -20,15 +20,30 @@ const inter = Inter({
 export async function generateMetadata() {
   const settings = await getSettings();
   return {
-    title: settings.seoTitle || "KMC Iyarkai Creation | Natural & Handmade Products",
-    description:
-      settings.seoDescription ||
-      "KMC Iyarkai Creation — 100% natural, eco-friendly, handmade products from Kallidaikurichi, Tirunelveli.",
-    icons: {
-      icon: "/images/logo.jpeg",
-      shortcut: "/images/logo.jpeg",
-      apple: "/images/logo.jpeg",
-    },
+   title:
+  settings.seoTitle ||
+  "Rani's Cook House | Homemade Pickles & Traditional Foods",
+
+description:
+  settings.seoDescription ||
+  "Rani's Cook House — Authentic homemade pickles, dry fish powder, avalose podi, sangu sathai, dry fruits & traditional homemade foods from Nagercoil, Tamil Nadu.",
+
+keywords: [
+  "Rani's Cook House",
+  "Homemade Pickles",
+  "Dry Fish Powder",
+  "Avalose Podi",
+  "Traditional Foods",
+  "Nagercoil",
+  "Tamil Nadu",
+  "Homemade Products",
+],
+
+icons: {
+  icon: "/images/logo.png",
+  shortcut: "/images/logo.png",
+  apple: "/images/logo.png",
+},
   };
 }
 
@@ -40,7 +55,7 @@ export default async function RootLayout({ children }) {
       <html lang="en" className={`${playfair.variable} ${inter.variable}`}>
         <body className="font-body antialiased flex min-h-screen items-center justify-center bg-champagne px-5 text-center">
           <div>
-            <h1 className="font-display text-3xl font-bold text-forest">We'll be back soon</h1>
+            <h1 className="font-display text-3xl font-bold text-maroon">We'll be back soon</h1>
             <p className="mt-3 text-muted">{settings.storeName} is currently undergoing maintenance.</p>
           </div>
         </body>

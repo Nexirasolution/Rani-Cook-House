@@ -26,7 +26,7 @@ export default function SearchBar() {
         value={query}
         onChange={(e) => setQuery(e.target.value)}
         placeholder="Search for handmade products..."
-        className="w-full flex-1 bg-transparent text-sm outline-none placeholder:text-gray-400"
+        className="search-input w-full flex-1 bg-transparent text-sm border-none outline-none focus:ring-0 placeholder:text-gray-400"
       />
       <button
         type="submit"

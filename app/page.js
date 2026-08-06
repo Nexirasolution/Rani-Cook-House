@@ -26,18 +26,30 @@ async function getData() {
 }
 
 const WHY_CHOOSE = [
-  { title: "100% Handmade", desc: "Crafted by skilled artisans" },
-  { title: "Eco-Friendly", desc: "Natural & sustainable materials" },
-  { title: "Premium Quality", desc: "Carefully crafted with perfection" },
-  { title: "Pan India Delivery", desc: "Safe & timely, everywhere" },
+  {
+    title: "Authentic Homemade",
+    desc: "Prepared using traditional family recipes",
+  },
+  {
+    title: "Premium Quality",
+    desc: "Fresh ingredients with uncompromised quality",
+  },
+  {
+    title: "No Artificial Preservatives",
+    desc: "Made with natural spices and ingredients",
+  },
+  {
+    title: "Pan India Delivery",
+    desc: "Safe packaging & doorstep delivery",
+  },
 ];
+
 const CATEGORY_IMAGES = {
-  "Handmade Wire Bags": "/categroy/wire-bags.png",
-  "Organic Fertilizers & Soil Enhancers": "/categroy/organic-fertilizers.png",
-  "Clay Products": "/categroy/clay-products.png",
-  "Wooden Products": "/categroy/wooden-products.png",
-  "Handmade Wooden Toys & Miniatures": "/categroy/wooden-toys.png",
-  "Herbal Products": "/categroy/herbal-products.png",
+  "Variety of Pickles": "/category/pickles.png",
+  "Variety of Dry Fish Powder": "/category/dry-fish-powder.png",
+  "Fried Rice Powder (Avalose Podi)": "/category/avalose-podi.png",
+  "Conch Meat (Sangu Sathai)": "/category/sangu-sathai.png",
+  "Dry Fruits & Nuts": "/category/dry-fruits.png",
 };
 export default async function HomePage() {
   const { categories, bestSelling } = await getData();
@@ -52,7 +64,7 @@ export default async function HomePage() {
       {/* Categories */}
       <section className="mx-auto max-w-7xl px-5 py-12 md:px-8 md:py-16">
         <div className="mb-8 text-center">
-          <h2 className="mt-2 font-display text-3xl font-bold text-forest md:text-4xl">
+          <h2 className="mt-2 font-display text-3xl font-bold text-maroon md:text-4xl">
             Shop by Category
           </h2>
         </div>
@@ -97,11 +109,11 @@ export default async function HomePage() {
                 <p className="text-xs font-semibold uppercase tracking-[0.25em] text-gold-dark">
                   Customer Favorites
                 </p>
-                <h2 className="mt-2 font-display text-3xl font-bold text-forest md:text-4xl">
+                <h2 className="mt-2 font-display text-3xl font-bold text-maroon md:text-4xl">
                   Best Selling Products
                 </h2>
               </div>
-              <Link href="/products" className="hidden text-sm font-semibold text-forest hover:underline md:block">
+              <Link href="/products" className="hidden text-sm font-semibold text-maroon hover:underline md:block">
                 View all &rarr;
               </Link>
             </div>
@@ -128,16 +140,21 @@ export default async function HomePage() {
       {/* Why choose us */}
       <section className="mx-auto max-w-7xl px-5 py-16 md:px-8">
         <div className="mb-10 text-center">
-          <h2 className="font-display text-3xl font-bold text-forest md:text-4xl">Why Choose Us?</h2>
+          <h2 className="font-display text-3xl font-bold text-maroon md:text-4xl">Why Choose Us?</h2>
         </div>
         <div className="grid grid-cols-2 gap-6 md:grid-cols-4">
           {WHY_CHOOSE.map((item) => (
             <div key={item.title} className="text-center">
-              <span className="badge-stamp mx-auto flex h-16 w-16 items-center justify-center border-gold/40 bg-forest text-ivory">
-                <LeafIcon className="h-7 w-7" />
+              <span className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-[#7A1C1C] shadow-lg ring-4 ring-[#F3D28B]/40 transition-all duration-300 hover:scale-110 hover:ring-[#F3D28B]">
+                <LeafIcon className="h-7 w-7 text-[#F3D28B]" />
               </span>
-              <p className="mt-4 font-display text-sm font-bold text-ink">{item.title}</p>
-              <p className="mt-1 text-xs text-muted">{item.desc}</p>
+              <p className="mt-5 font-display text-lg font-medium text-[#7A1C1C]">
+                {item.title}
+              </p>
+
+              <p className="mt-2 text-sm leading-6 text-gray-600">
+                {item.desc}
+              </p>
             </div>
           ))}
         </div>

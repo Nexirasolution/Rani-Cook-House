@@ -56,7 +56,7 @@ export default async function CategoriesPage({ searchParams }) {
           <p className="text-xs font-semibold uppercase tracking-[0.25em] text-gold-dark">
             Browse
           </p>
-          <h1 className="mt-2 font-display text-3xl font-bold text-forest md:text-4xl">
+          <h1 className="mt-2 font-display text-3xl font-bold text-maroon md:text-4xl">
             All Categories
           </h1>
         </div>

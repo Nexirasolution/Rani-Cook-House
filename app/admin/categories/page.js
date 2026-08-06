@@ -103,10 +103,10 @@ export default function AdminCategoriesPage() {
     <div>
       <div className="flex flex-wrap items-center justify-between gap-4">
         <div>
-          <h1 className="font-display text-2xl font-bold text-forest">Categories</h1>
+          <h1 className="font-display text-2xl font-bold text-maroon">Categories</h1>
           <p className="mt-1 text-sm text-muted">{categories.length} categories</p>
         </div>
-        <button onClick={openAdd} className="rounded-full bg-forest px-6 py-2 text-sm font-semibold text-ivory shadow-soft hover:bg-forest-light">
+        <button onClick={openAdd} className="rounded-full bg-maroon px-6 py-2 text-sm font-semibold text-white shadow-soft hover:bg-maroonDark">
           + Add Category
         </button>
       </div>
@@ -144,7 +144,7 @@ export default function AdminCategoriesPage() {
                       />
                     ) : (
                       <div className="flex h-16 w-16 items-center justify-center rounded-full bg-champagne">
-                        <Icon className="h-7 w-7 text-forest" />
+                        <Icon className="h-7 w-7 text-maroon" />
                       </div>
                     )}
 
@@ -171,7 +171,7 @@ export default function AdminCategoriesPage() {
                     <button
                       title="Edit"
                       onClick={() => openEdit(c)}
-                      className="text-forest hover:scale-110 transition"
+                      className="text-maroon hover:scale-110 transition"
                     >
                       ✏️
                     </button>
@@ -201,7 +201,7 @@ export default function AdminCategoriesPage() {
               required
               value={form.name}
               onChange={(e) => setForm({ ...form, name: e.target.value })}
-              className="w-full rounded-xl border border-gold/30 px-4 py-2.5 text-sm outline-none focus:border-forest"
+              className="w-full rounded-xl border border-gold/30 px-4 py-2.5 text-sm outline-none focus:border-maroon"
             />
           </label>
 
@@ -211,7 +211,7 @@ export default function AdminCategoriesPage() {
               rows={2}
               value={form.description}
               onChange={(e) => setForm({ ...form, description: e.target.value })}
-              className="w-full rounded-xl border border-gold/30 px-4 py-2.5 text-sm outline-none focus:border-forest"
+              className="w-full rounded-xl border border-gold/30 px-4 py-2.5 text-sm outline-none focus:border-maroon"
             />
           </label>
 
@@ -236,8 +236,10 @@ export default function AdminCategoriesPage() {
                     key={key}
                     onClick={() => setForm({ ...form, icon: key })}
                     className={`flex h-10 w-10 items-center justify-center rounded-full border ${
-                      form.icon === key ? "border-forest bg-forest text-ivory" : "border-gold/30 text-forest"
-                    }`}
+  form.icon === key
+    ? "border-maroon bg-maroon text-white"
+    : "border-gold/30 text-maroon"
+}`}
                   >
                     <Icon className="h-4 w-4" />
                   </button>
@@ -256,7 +258,7 @@ export default function AdminCategoriesPage() {
           <button
             type="submit"
             disabled={saving}
-            className="w-full rounded-full bg-forest px-8 py-3 text-sm font-semibold text-ivory shadow-soft hover:bg-forest-light disabled:opacity-60"
+            className="w-full rounded-full bg-maroon px-8 py-3 text-sm font-semibold text-white shadow-soft hover:bg-maroonDark disabled:opacity-60"
           >
             {saving ? "Saving..." : editingId ? "Save Changes" : "Add Category"}
           </button>

@@ -1,123 +1,112 @@
-# KMC Iyarkai Creation — E-commerce Website
+# Rani's Cook House — E-commerce Website
 
-A premium, full-stack e-commerce site for KMC's natural & handmade products —
-clay products, wooden crafts, wire bags, organic farm inputs and herbal
-products. Built with Next.js 15 (App Router), MongoDB/Mongoose, and
-Cloudinary for image storage.
+A full production-ready e-commerce site for **Rani's Cook House** (Nagercoil, Tamil Nadu) —
+homemade pickles, dry fish powder, avalose podi, sangu sathai and dry fruits & nuts,
+under the tagline "Mom's Secret Taste".
 
-## Features
+Built with **Next.js 15 (App Router, plain JavaScript)**, **MongoDB (Mongoose)**, and
+**Cloudinary** for images, with a full admin panel.
+
+## What's included
 
 **Storefront**
-- Home page with hero, category grid, featured products
-- Product listing with category filter and search
+- Home page with hero, category grid, banners, featured products, trust strip
+- Product listing with category filter
 - Product detail page with add-to-cart / buy now
-- Cart and checkout (COD / UPI / Online)
-- **Track order by phone number** — customers can check order status
-  without creating an account
+- Cart (persisted in the browser) and checkout with state-wise shipping
+- Order confirmation + public order tracking page (no login required)
 
-**Admin Panel** (`/admin`)
-- Secure login (JWT, httpOnly cookie)
-- **Dashboard** — today/weekly/monthly sales, pending orders, 14-day sales
-  trend chart, top selling products, low stock alerts
-- **Products** — full CRUD, multi-image upload via Cloudinary, stock,
-  pricing, featured/active toggles
-- **Categories** — full CRUD with icon picker
-- **Orders** — search/filter, view full order detail, update order status
-  (pending → confirmed → packed → shipped → delivered / cancelled)
-- **Inventory** — stock overview, low-stock / out-of-stock filters, quick
-  stock updates
-- **Logout**
+**Admin panel** (`/admin`, protected by login)
+- Dashboard: today/weekly/monthly sales, pending orders, 14-day sales chart, top sellers, low stock alerts
+- Products: list, search, add, edit, delete, multi-image upload via Cloudinary
+- Categories: add/edit/delete with image
+- Banners: add/edit/delete, active/inactive toggle
+- Orders: list with status filters and search, detail view with status updates (Pending → Confirmed → Packed → Shipped → Delivered / Cancelled)
+- Inventory: stock levels, low-stock / out-of-stock filters, inline stock updates
+- Settings: store info, default + state-wise shipping fees, free shipping threshold, socials, SEO fields, maintenance mode toggle
 
-## Tech Stack
+## 1. Prerequisites
 
-- Next.js 15 (App Router, Server Components)
-- MongoDB + Mongoose
-- Cloudinary (image hosting)
-- JWT (jsonwebtoken) for admin auth
-- Tailwind CSS
-- Recharts (dashboard chart)
+- Node.js 18.18+ (Node 20 recommended)
+- A free [MongoDB Atlas](https://www.mongodb.com/cloud/atlas/register) cluster
+- A free [Cloudinary](https://cloudinary.com/users/register/free) account
+- A [Vercel](https://vercel.com) account (for deployment)
 
-## 1. Install dependencies
+## 2. Local setup
 
 ```bash
 npm install
-```
-
-## 2. Set up environment variables
-
-Copy `.env.example` to `.env.local` and fill in your values:
-
-```bash
 cp .env.example .env.local
 ```
 
+Fill in `.env.local`:
+
 | Variable | Where to get it |
 |---|---|
-| `MONGODB_URI` | [MongoDB Atlas](https://www.mongodb.com/cloud/atlas) → Create a free cluster → Connect → Drivers → copy the connection string |
-| `CLOUDINARY_CLOUD_NAME`, `CLOUDINARY_API_KEY`, `CLOUDINARY_API_SECRET` | [Cloudinary Dashboard](https://cloudinary.com/console) after creating a free account |
-| `JWT_SECRET` | Any long random string, e.g. generate with `openssl rand -base64 32` |
-| `ADMIN_EMAIL` / `ADMIN_PASSWORD` | Choose your own admin login credentials |
+| `MONGODB_URI` | Atlas → Connect → Drivers → copy connection string, add a database name e.g. `/ranis-cook-house` before the `?` |
+| `CLOUDINARY_CLOUD_NAME`, `CLOUDINARY_API_KEY`, `CLOUDINARY_API_SECRET` | Cloudinary Dashboard home page |
+| `JWT_SECRET` | Any long random string (e.g. run `openssl rand -base64 32`) |
+| `ADMIN_EMAIL` / `ADMIN_PASSWORD` | The login you want for the admin panel — used only when you run the seed script |
+| `NEXT_PUBLIC_SITE_URL` | `http://localhost:3000` for local dev, your live URL after deploying |
 
-## 3. (Optional) Seed starter data
-
-This adds KMC's real product categories (Clay Products, Wooden Products,
-Handmade Wire Bags, Organic Fertilizers, Wooden Toys, Herbal Products) plus
-a few sample products, so the store isn't empty on first run:
+Seed the database with your admin account, categories, all starter products, banners and default settings:
 
 ```bash
 npm run seed
 ```
 
-You can then add product photos from **Admin → Products → Edit**.
+This prints your admin login. **Product images are not uploaded by the seed script** — after seeding,
+log into `/admin/products`, edit each product, and upload photos (they'll go straight to Cloudinary).
 
-## 4. Run locally
+Run the dev server:
 
 ```bash
 npm run dev
 ```
 
-- Storefront: http://localhost:3000
-- Admin panel: http://localhost:3000/admin/login
+Visit `http://localhost:3000` for the storefront and `http://localhost:3000/admin/login` for the admin panel.
 
-## 5. Deploy (Vercel — recommended, free tier works)
+## 3. Deploying to Vercel
 
-1. Push this project to a GitHub repository.
-2. Go to [vercel.com](https://vercel.com) → New Project → import the repo.
-3. Add all the environment variables from `.env.local` in the Vercel
-   project settings (Settings → Environment Variables).
-4. Deploy. Your site will be live at `your-project.vercel.app`.
+1. Push this project to a GitHub repo (or use `vercel` CLI directly from this folder).
+2. Import the repo in Vercel → New Project.
+3. Add the same environment variables from `.env.local` in Vercel → Project Settings → Environment Variables.
+4. Deploy. After the first deploy, update `NEXT_PUBLIC_SITE_URL` to your real Vercel URL and redeploy.
+5. Run `npm run seed` **once**, locally, pointed at your production `MONGODB_URI`, to create your admin account and starter catalog.
 
-Make sure your MongoDB Atlas cluster allows connections from anywhere
-(Network Access → Add IP → `0.0.0.0/0`) since Vercel's IPs are dynamic.
-
-## Project Structure
+## 4. Project structure
 
 ```
-app/
-  page.js                  → Homepage
-  products/                → Product listing & detail pages
-  cart/, checkout/         → Cart & checkout flow
-  track-order/             → Public order tracking by phone
-  admin/                   → Admin panel (dashboard, products, categories,
-                              orders, inventory, login)
-  api/                     → All backend routes (products, categories,
-                              orders, orders/track, upload, auth, dashboard)
-components/                → Shared UI components
-context/CartContext.js     → Client-side cart state (localStorage)
-lib/                       → MongoDB, Cloudinary, auth helpers
-models/                    → Mongoose schemas (Product, Category, Order)
-middleware.js              → Protects /admin and admin API routes
-scripts/seed.mjs           → Starter data seeding script
+app/                    Public pages + admin pages + API routes (App Router)
+  admin/                Admin panel pages (protected by middleware.js)
+  api/                  REST API routes (products, categories, banners, orders, settings, upload, admin auth)
+  products/, cart/, checkout/, track-order/   Public storefront pages
+components/             Shared UI (Header, Footer, ProductCard, cart panel)
+components/admin/       Admin-only UI (sidebar, forms, image uploader, dashboard chart)
+lib/                    Mongo connection, Cloudinary helpers, JWT auth, cart store, slugify
+models/                 Mongoose schemas (Product, Category, Banner, Order, Settings, Admin)
+scripts/seed.js         One-time database seed script
+middleware.js           Edge auth guard for /admin/*
 ```
 
-## Notes
+## 5. Starting product catalog
 
-- Order numbers are generated automatically in the format `KMC-YYMMDD-0001`.
-- Stock is decremented automatically when an order is placed, and restored
-  automatically if an order is cancelled from the admin panel.
-- Customers track orders by phone number (last 10 digits are matched, so it
-  works whether they type `+91` or not) — optionally combined with the order
-  number for precision.
-- The design uses KMC's brand palette: warm ivory background, forest green,
-  and gold accents, with a terracotta accent for highlights — matching the
-  premium, natural feel of your existing flyers and logo.
+The seed script creates these products under four categories — edit prices, weights, and
+descriptions any time from **Admin → Products**:
+
+**Pickles**: Mango Pickle, Lime Pickle, Garlic Pickle, Prawn Pickle
+
+**Dry Fish Powder**: Dry Fish Powder (Nethili/Anchovy), Mixed Dry Fish Powder
+
+**Powders & Masala**: Avalose Podi (Fried Rice Powder), Sangu Sathai (Conch Meat)
+
+**Dry Fruits & Nuts**: Mixed Dry Fruits & Nuts, Cashew Nuts, Almonds, Raisins
+
+Add, remove, or reprice any product from the admin panel — the seed script only needs to be run once.
+
+## 6. Support
+
+Store contact used throughout the site (edit anytime in Admin → Settings):
+- Email: ranipickles13@gmail.com
+- Phone / WhatsApp: 7418058533
+- Location: Nagercoil, Tamil Nadu

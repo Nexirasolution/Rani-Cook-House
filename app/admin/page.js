@@ -1,94 +1,262 @@
-"use client";
+import { connectDB } from "@/lib/mongodb";
+import Order from "@/models/Order";
+import Product from "@/models/Product";
+import DashboardCharts from "@/components/admin/DashboardCharts";
 
-import { useEffect, useState } from "react";
-import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from "recharts";
+export const dynamic = "force-dynamic";
 
-function StatCard({ label, value, sub, accent }) {
-  return (
-    <div className="rounded-xl2 border border-gold/15 bg-white p-5 shadow-card">
-      <p className="text-xs font-medium text-muted">{label}</p>
-      <p className={`mt-2 font-display text-2xl font-bold ${accent || "text-forest"}`}>{value}</p>
-      <p className="mt-1 text-xs text-muted">{sub}</p>
-    </div>
-  );
+function startOfDay(date) {
+  const d = new Date(date);
+  d.setHours(0, 0, 0, 0);
+  return d;
 }
 
-export default function AdminDashboardPage() {
-  const [data, setData] = useState(null);
-  const [loading, setLoading] = useState(true);
+export default async function AdminDashboardPage() {
+  await connectDB();
 
-  useEffect(() => {
-    fetch("/api/dashboard")
-      .then((r) => r.json())
-      .then(setData)
-      .finally(() => setLoading(false));
-  }, []);
+  const today = startOfDay(new Date());
 
-  if (loading) return <p className="text-muted">Loading dashboard...</p>;
-  if (!data) return <p className="text-terracotta">Failed to load dashboard.</p>;
+  const weekAgo = new Date(today);
+  weekAgo.setDate(weekAgo.getDate() - 7);
+
+  const monthAgo = new Date(today);
+  monthAgo.setDate(monthAgo.getDate() - 30);
+
+  const fourteenAgo = new Date(today);
+  fourteenAgo.setDate(fourteenAgo.getDate() - 13);
+
+  const [
+    todayOrders,
+    weekOrders,
+    monthOrders,
+    pendingCount,
+    last14Orders,
+    topProducts,
+    lowStock,
+  ] = await Promise.all([
+    Order.find({
+      createdAt: { $gte: today },
+      status: { $ne: "Cancelled" },
+    }).lean(),
+
+    Order.find({
+      createdAt: { $gte: weekAgo },
+      status: { $ne: "Cancelled" },
+    }).lean(),
+
+    Order.find({
+      createdAt: { $gte: monthAgo },
+      status: { $ne: "Cancelled" },
+    }).lean(),
+
+    Order.countDocuments({
+      status: "Pending",
+    }),
+
+    Order.find({
+      createdAt: { $gte: fourteenAgo },
+      status: { $ne: "Cancelled" },
+    }).lean(),
+
+    Product.find()
+      .sort({ soldCount: -1 })
+      .limit(5)
+      .lean(),
+
+    Product.find({
+      $expr: {
+        $lte: ["$stock", "$lowStockAlertAt"],
+      },
+    })
+      .limit(5)
+      .lean(),
+  ]);
+
+  const totalSales = (orders) =>
+    orders.reduce((sum, order) => sum + order.total, 0);
+
+  // Chart Data
+  const chartMap = {};
+
+  for (let i = 0; i < 14; i++) {
+    const d = new Date(fourteenAgo);
+    d.setDate(d.getDate() + i);
+
+    const key = `${String(d.getMonth() + 1).padStart(2, "0")}-${String(
+      d.getDate()
+    ).padStart(2, "0")}`;
+
+    chartMap[key] = 0;
+  }
+
+  last14Orders.forEach((order) => {
+    const d = new Date(order.createdAt);
+
+    const key = `${String(d.getMonth() + 1).padStart(2, "0")}-${String(
+      d.getDate()
+    ).padStart(2, "0")}`;
+
+    if (chartMap[key] !== undefined) {
+      chartMap[key] += order.total;
+    }
+  });
+
+  const chartData = Object.entries(chartMap).map(([date, total]) => ({
+    date,
+    total,
+  }));
 
   return (
-    <div>
-      <h1 className="font-display text-2xl font-bold text-forest">Dashboard</h1>
-      <p className="mt-1 text-sm text-muted">Welcome back — here&rsquo;s how KMC Iyarkai Creation is doing.</p>
+    <div className="w-full max-w-7xl mx-auto px-6 py-8">
 
-      <div className="mt-6 grid grid-cols-2 gap-4 lg:grid-cols-4">
-        <StatCard label="Today's Sales" value={`₹${data.todaySales}`} sub={`${data.todayOrderCount} orders`} />
-        <StatCard label="Weekly Sales" value={`₹${data.weekSales}`} sub={`${data.weekOrderCount} orders`} />
-        <StatCard label="Monthly Sales" value={`₹${data.monthSales}`} sub={`${data.monthOrderCount} orders`} accent="text-gold-dark" />
-        <StatCard label="Pending Orders" value={data.pendingOrders} sub="Need action" accent="text-terracotta" />
+      {/* Header */}
+
+      <div className="mb-8">
+        <h1 className="font-display text-4xl text-maroon">
+          Dashboard
+        </h1>
+
+        <p className="mt-2 text-gray-500">
+          Welcome back — here's how Rani's Cook House is doing.
+        </p>
       </div>
 
-      <div className="mt-6 rounded-xl2 border border-gold/15 bg-white p-6 shadow-card">
-        <h2 className="font-display text-base font-bold text-forest">Sales Trend (Last 14 Days)</h2>
-        <div className="mt-4 h-72 w-full">
-          <ResponsiveContainer width="100%" height="100%">
-            <LineChart data={data.salesTrend}>
-              <CartesianGrid strokeDasharray="3 3" stroke="#EFE6D2" />
-              <XAxis dataKey="date" tick={{ fontSize: 11 }} stroke="#6E6656" />
-              <YAxis tick={{ fontSize: 11 }} stroke="#6E6656" />
-              <Tooltip
-                contentStyle={{ borderRadius: 12, border: "1px solid #EFE6D2", fontSize: 12 }}
-                formatter={(value) => [`₹${value}`, "Sales"]}
-              />
-              <Line type="monotone" dataKey="total" stroke="#B8923F" strokeWidth={2.5} dot={{ r: 3 }} />
-            </LineChart>
-          </ResponsiveContainer>
-        </div>
-      </div>
+      {/* Dashboard Cards */}
 
-      <div className="mt-6 grid gap-6 lg:grid-cols-2">
-        <div className="rounded-xl2 border border-gold/15 bg-white p-6 shadow-card">
-          <h2 className="font-display text-base font-bold text-forest">Top Selling Products</h2>
-          <div className="mt-4 space-y-3">
-            {data.topSelling.length === 0 && <p className="text-sm text-muted">No sales yet.</p>}
-            {data.topSelling.map((p) => (
-              <div key={p.name} className="flex items-center justify-between text-sm">
-                <span className="text-ink/80">{p.name}</span>
-                <span className="font-semibold text-forest">{p.qty} sold</span>
-              </div>
-            ))}
-          </div>
+      <div className="grid gap-6 sm:grid-cols-2 xl:grid-cols-4">
+
+        <div className="rounded-2xl border border-stoneline bg-white p-6 shadow-sm">
+          <p className="text-gray-500">Today's Sales</p>
+
+          <h2 className="mt-3 font-display text-4xl text-maroon">
+            ₹{totalSales(todayOrders)}
+          </h2>
+
+          <p className="mt-2 text-sm text-gray-400">
+            {todayOrders.length} Orders
+          </p>
         </div>
 
-        <div className="rounded-xl2 border border-gold/15 bg-white p-6 shadow-card">
-          <h2 className="font-display text-base font-bold text-forest">Low Stock Alert</h2>
-          <div className="mt-4 space-y-3">
-            {data.lowStock.length === 0 && <p className="text-sm text-muted">All products are well stocked.</p>}
-            {data.lowStock.map((p) => (
-              <div key={p._id} className="flex items-center justify-between text-sm">
-                <span className="text-ink/80">{p.name}</span>
-                <span className="font-semibold text-terracotta">{p.stock} left</span>
-              </div>
-            ))}
-          </div>
+        <div className="rounded-2xl border border-stoneline bg-white p-6 shadow-sm">
+          <p className="text-gray-500">Weekly Sales</p>
+
+          <h2 className="mt-3 font-display text-4xl text-maroon">
+            ₹{totalSales(weekOrders)}
+          </h2>
+
+          <p className="mt-2 text-sm text-gray-400">
+            {weekOrders.length} Orders
+          </p>
         </div>
+
+        <div className="rounded-2xl border border-stoneline bg-white p-6 shadow-sm">
+          <p className="text-gray-500">Monthly Sales</p>
+
+          <h2 className="mt-3 font-display text-4xl text-maroon">
+            ₹{totalSales(monthOrders)}
+          </h2>
+
+          <p className="mt-2 text-sm text-gray-400">
+            {monthOrders.length} Orders
+          </p>
+        </div>
+
+        <div className="rounded-2xl border border-stoneline bg-white p-6 shadow-sm">
+          <p className="text-gray-500">Pending Orders</p>
+
+          <h2 className="mt-3 font-display text-4xl text-maroon">
+            {pendingCount}
+          </h2>
+
+          <p className="mt-2 text-sm text-gray-400">
+            Need Action
+          </p>
+        </div>
+
       </div>
 
-      <div className="mt-6 grid grid-cols-2 gap-4 lg:grid-cols-2">
-        <StatCard label="Total Products" value={data.totalProducts} sub="Across all categories" />
-        <StatCard label="Total Categories" value={data.totalCategories} sub="Active collections" />
+      {/* Sales Chart */}
+
+      <div className="mt-8 rounded-2xl border border-stoneline bg-white p-6 shadow-sm">
+
+        <h2 className="mb-5 font-display text-2xl text-maroon">
+          Sales Trend (Last 14 Days)
+        </h2>
+
+        <DashboardCharts data={chartData} />
+
       </div>
+
+      {/* Bottom Section */}
+
+      <div className="mt-8 grid gap-6 lg:grid-cols-2">
+
+        {/* Top Selling */}
+
+        <div className="rounded-2xl border border-stoneline bg-white p-6 shadow-sm">
+
+          <h2 className="mb-5 font-display text-2xl text-maroon">
+            Top Selling Products
+          </h2>
+
+          {topProducts.filter((p) => p.soldCount > 0).length === 0 ? (
+            <p className="text-sm text-gray-500">
+              No sales yet.
+            </p>
+          ) : (
+            <ul className="space-y-4">
+              {topProducts
+                .filter((p) => p.soldCount > 0)
+                .map((p) => (
+                  <li
+                    key={p._id}
+                    className="flex items-center justify-between border-b pb-3"
+                  >
+                    <span>{p.name}</span>
+
+                    <span className="font-semibold text-maroon">
+                      {p.soldCount} Sold
+                    </span>
+                  </li>
+                ))}
+            </ul>
+          )}
+
+        </div>
+
+        {/* Low Stock */}
+
+        <div className="rounded-2xl border border-stoneline bg-white p-6 shadow-sm">
+
+          <h2 className="mb-5 font-display text-2xl text-maroon">
+            Low Stock Alert
+          </h2>
+
+          {lowStock.length === 0 ? (
+            <p className="text-sm text-gray-500">
+              All products are well stocked.
+            </p>
+          ) : (
+            <ul className="space-y-4">
+              {lowStock.map((p) => (
+                <li
+                  key={p._id}
+                  className="flex items-center justify-between border-b pb-3"
+                >
+                  <span>{p.name}</span>
+
+                  <span className="font-semibold text-red-600">
+                    {p.stock} Left
+                  </span>
+                </li>
+              ))}
+            </ul>
+          )}
+
+        </div>
+
+      </div>
+
     </div>
   );
 }

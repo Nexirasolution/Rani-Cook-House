@@ -128,7 +128,7 @@ export default function ProductsGrid({ initialCategory, initialSearch }) {
           placeholder="Search products..."
           value={search}
           onChange={(e) => setSearch(e.target.value)}
-          className="w-full rounded-full border border-gold/30 bg-white px-5 py-2.5 text-sm outline-none focus:border-forest md:w-64"
+          className="w-full rounded-full border border-gold/30 bg-white px-5 py-2.5 text-sm outline-none focus:border-maroon md:w-64"
         />
       </div>
 
@@ -154,7 +154,7 @@ export default function ProductsGrid({ initialCategory, initialSearch }) {
               placeholder="Min"
               value={minPrice}
               onChange={(e) => setMinPrice(e.target.value)}
-              className="w-24 rounded-full border border-gold/30 bg-white px-3 py-2 text-sm outline-none focus:border-forest"
+              className="w-24 rounded-full border border-gold/30 bg-white px-3 py-2 text-sm outline-none focus:border-maroon"
             />
             <span className="text-xs text-ink/40">to</span>
             <input
@@ -163,7 +163,7 @@ export default function ProductsGrid({ initialCategory, initialSearch }) {
               placeholder="Max"
               value={maxPrice}
               onChange={(e) => setMaxPrice(e.target.value)}
-              className="w-24 rounded-full border border-gold/30 bg-white px-3 py-2 text-sm outline-none focus:border-forest"
+              className="w-24 rounded-full border border-gold/30 bg-white px-3 py-2 text-sm outline-none focus:border-maroon"
             />
           </div>
         </div>
@@ -180,7 +180,7 @@ export default function ProductsGrid({ initialCategory, initialSearch }) {
           <select
             value={sortBy}
             onChange={(e) => setSortBy(e.target.value)}
-            className="rounded-full border border-gold/30 bg-white px-4 py-2.5 text-sm outline-none focus:border-forest"
+            className="rounded-full border border-gold/30 bg-white px-4 py-2.5 text-sm outline-none focus:border-maroon"
           >
             {SORT_OPTIONS.map((opt) => (
               <option key={opt.value} value={opt.value}>

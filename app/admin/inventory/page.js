@@ -58,7 +58,7 @@ export default function AdminInventoryPage() {
     <div>
       <div className="flex flex-wrap items-center justify-between gap-4">
         <div>
-          <h1 className="font-display text-2xl font-bold text-forest">Inventory</h1>
+          <h1 className="font-display text-2xl font-bold text-maroon">Inventory</h1>
           <p className="mt-1 text-sm text-muted">Track and update stock levels across all products</p>
         </div>
         <input
@@ -66,18 +66,20 @@ export default function AdminInventoryPage() {
           placeholder="Search products..."
           value={search}
           onChange={(e) => setSearch(e.target.value)}
-          className="rounded-full border border-gold/30 bg-white px-4 py-2 text-sm outline-none focus:border-forest md:w-64"
+          className="rounded-full border border-gold/30 bg-white px-4 py-2 text-sm outline-none focus:border-maroon md:w-64"
         />
       </div>
 
       <div className="mt-6 grid grid-cols-3 gap-4">
         <div className="rounded-xl2 border border-gold/15 bg-white p-5 shadow-card">
           <p className="text-xs font-medium text-muted">Total Products</p>
-          <p className="mt-2 font-display text-2xl font-bold text-forest">{products.length}</p>
+          <p className="mt-2 font-display text-2xl font-bold text-maroon">
+  {products.length}
+</p>
         </div>
         <div className="rounded-xl2 border border-gold/15 bg-white p-5 shadow-card">
           <p className="text-xs font-medium text-muted">Low Stock</p>
-          <p className="mt-2 font-display text-2xl font-bold text-gold-dark">{lowCount}</p>
+          <p className="mt-2 font-display text-2xl font-bold text-goldDark">{lowCount}</p>
         </div>
         <div className="rounded-xl2 border border-gold/15 bg-white p-5 shadow-card">
           <p className="text-xs font-medium text-muted">Out of Stock</p>
@@ -94,8 +96,11 @@ export default function AdminInventoryPage() {
           <button
             key={key}
             onClick={() => setFilter(key)}
-            className={`rounded-full border px-4 py-1.5 text-xs font-semibold ${filter === key ? "border-forest bg-forest text-ivory" : "border-gold/30 text-ink/70"}`}
-          >
+            className={`rounded-full border px-4 py-1.5 text-xs font-semibold ${
+              filter === key
+                ? "border-maroon bg-maroon text-white"
+                : "border-gold/30 text-ink/70"
+            }`}          >
             {label}
           </button>
         ))}
@@ -122,9 +127,22 @@ export default function AdminInventoryPage() {
                 <tr key={p._id} className="border-b border-gold/10 last:border-0">
                   <td className="flex items-center gap-3 px-4 py-3">
                     <div className="h-10 w-10 overflow-hidden rounded-lg bg-champagne">
-                      {p.images?.[0]?.url && (
-                        <Image src={p.images[0].url} alt="" width={40} height={40} className="h-full w-full object-cover" />
-                      )}
+                      {p.media?.[0] &&
+  (p.media[0].type === "video" ? (
+    <video
+      src={p.media[0].url}
+      className="h-full w-full object-cover"
+      muted
+    />
+  ) : (
+    <Image
+      src={p.media[0].url}
+      alt={p.name}
+      width={40}
+      height={40}
+      className="h-full w-full object-cover"
+    />
+  ))}
                     </div>
                     <span className="font-medium text-ink">{p.name}</span>
                   </td>
@@ -151,12 +169,12 @@ export default function AdminInventoryPage() {
                         placeholder={String(p.stock)}
                         value={editValues[p._id] ?? ""}
                         onChange={(e) => setEditValues((prev) => ({ ...prev, [p._id]: e.target.value }))}
-                        className="w-20 rounded-lg border border-gold/30 px-2 py-1.5 text-sm outline-none focus:border-forest"
+                        className="w-20 rounded-lg border border-gold/30 px-2 py-1.5 text-sm outline-none focus:border-maroon"
                       />
                       <button
                         onClick={() => saveStock(p._id)}
                         disabled={savingId === p._id || editValues[p._id] === undefined}
-                        className="rounded-full bg-forest px-4 py-1.5 text-xs font-semibold text-ivory hover:bg-forest-light disabled:opacity-40"
+                        className="rounded-full bg-maroon px-4 py-1.5 text-xs font-semibold text-white hover:bg-maroonDark disabled:opacity-40"
                       >
                         {savingId === p._id ? "..." : "Save"}
                       </button>

@@ -1,38 +1,39 @@
 {
-  "name": "kmc-natural-products",
+  "name": "ranis-cook-house",
   "version": "1.0.0",
   "private": true,
+  "type": "module",
   "scripts": {
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "seed": "node scripts/seed.mjs"
+    "seed": "node -r dotenv/config scripts/seed.js"
   },
   "dependencies": {
-    "bcryptjs": "^2.4.3",
-    "cloudinary": "^2.5.1",
-    "dotenv": "^16.4.7",
-    "jose": "^5.9.6",
-    "jsonwebtoken": "^9.0.2",
-    "lucide-react": "^1.27.0",
-    "mongoose": "^8.9.5",
-    "next": "^16.2.12",
-    "razorpay": "^2.9.8",
-    "react": "^19.0.0",
-    "react-dom": "^19.0.0",
-    "react-icons": "^5.7.0",
+    "bcryptjs": "2.4.3",
+    "cloudinary": "2.5.1",
+    "clsx": "2.1.1",
+    "framer-motion": "11.15.0",
+    "jose": "5.9.6",
+    "jsonwebtoken": "^9.0.3",
+    "lucide-react": "0.469.0",
+    "mongoose": "8.9.5",
+    "next": "15.5.22",
+    "react": "19.0.0",
+    "react-dom": "19.0.0",
     "recharts": "^2.15.0",
     "streamifier": "^0.1.1",
     "swiper": "^14.0.7",
-    "xlsx": "^0.18.5"
+    "zustand": "5.0.3"
   },
   "devDependencies": {
-    "@types/node": "26.1.2",
-    "@types/react": "19.2.17",
-    "autoprefixer": "^10.4.20",
-    "postcss": "^8.4.49",
-    "tailwindcss": "^3.4.17",
-    "typescript": "6.0.3"
+    "@types/node": "20.17.6",
+    "@types/react": "19.2.18",
+    "autoprefixer": "10.4.20",
+    "dotenv": "16.4.7",
+    "postcss": "8.5.1",
+    "tailwindcss": "3.4.17",
+    "typescript": "5.8.2"
   }
 }

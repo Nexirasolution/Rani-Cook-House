@@ -72,21 +72,21 @@ export default function AdminProductsPage() {
   }
 
   function openEdit(p) {
-    setEditingId(p._id);
-    setForm({
-      name: p.name,
-      sku: p.sku || "",
-      category: p.category?._id || "",
-      price: p.price,
-      compareAtPrice: p.compareAtPrice || "",
-      unit: p.unit,
-      stock: p.stock,
-      lowStockThreshold: p.lowStockThreshold,
-      description: p.description || "",
-      isFeatured: p.isFeatured,
-      isActive: p.isActive,
-      media: p.media || [],
-    });
+  setEditingId(p._id);
+  setForm({
+    name: p.name || "",
+    sku: p.sku || "",
+    category: p.category?._id || "",
+    price: p.price || "",
+    compareAtPrice: p.compareAtPrice || "",
+    unit: p.unit || "piece",
+    stock: p.stock ?? 0,
+    lowStockThreshold: p.lowStockThreshold ?? 5,
+    description: p.description || "",
+    isFeatured: p.isFeatured ?? false,
+    isActive: p.isActive ?? true,
+    media: p.media || [],
+  });
     setError("");
     setModalOpen(true);
   }
@@ -154,7 +154,7 @@ export default function AdminProductsPage() {
     <div>
       <div className="flex flex-wrap items-center justify-between gap-4">
         <div>
-          <h1 className="font-display text-2xl font-bold text-forest">Products</h1>
+          <h1 className="font-display text-2xl font-bold text-maroon">Products</h1>
           <p className="mt-1 text-sm text-muted">
             {pagination ? `${pagination.total} products total` : "Loading..."}
           </p>
@@ -165,12 +165,12 @@ export default function AdminProductsPage() {
             placeholder="Search by name or SKU..."
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            className="rounded-full border border-gold/30 bg-white px-4 py-2 text-sm outline-none focus:border-forest"
+            className="rounded-full border border-gold/30 bg-white px-4 py-2 text-sm outline-none focus:border-maroon"
           />
           <button
             onClick={() => setBulkOpen(true)}
             disabled={categories.length === 0}
-            className="rounded-full border border-forest px-6 py-2 text-sm font-semibold text-forest hover:bg-forest/5 disabled:opacity-50"
+            className="rounded-full border border-forest px-6 py-2 text-sm font-semibold text-maroon hover:bg-forest/5 disabled:opacity-50"
             title={categories.length === 0 ? "Add a category first" : ""}
           >
             Bulk Upload
@@ -239,12 +239,12 @@ export default function AdminProductsPage() {
                     </span>
                   </td>
                   <td className="px-4 py-3">
-                    <span className={`rounded-full px-3 py-1 text-xs font-medium ${p.isActive ? "bg-forest/10 text-forest" : "bg-muted/10 text-muted"}`}>
+                    <span className={`rounded-full px-3 py-1 text-xs font-medium ${p.isActive ? "bg-forest/10 text-maroon" : "bg-muted/10 text-muted"}`}>
                       {p.isActive ? "Active" : "Hidden"}
                     </span>
                   </td>
                   <td className="px-4 py-3 text-right">
-                    <button onClick={() => openEdit(p)} className="mr-3 text-xs font-semibold text-forest hover:underline">Edit</button>
+                    <button onClick={() => openEdit(p)} className="mr-3 text-xs font-semibold text-maroon hover:underline">Edit</button>
                     <button onClick={() => handleDelete(p._id)} className="text-xs font-semibold text-terracotta hover:underline">Delete</button>
                   </td>
                 </tr>
@@ -319,7 +319,7 @@ export default function AdminProductsPage() {
               required
               value={form.category}
               onChange={(e) => setForm({ ...form, category: e.target.value })}
-              className="w-full rounded-xl border border-gold/30 px-4 py-2.5 text-sm outline-none focus:border-forest"
+              className="w-full rounded-xl border border-gold/30 px-4 py-2.5 text-sm outline-none focus:border-maroon"
             >
               <option value="">Select category</option>
               {categories.map((c) => (
@@ -341,7 +341,7 @@ export default function AdminProductsPage() {
               rows={3}
               value={form.description}
               onChange={(e) => setForm({ ...form, description: e.target.value })}
-              className="w-full rounded-xl border border-gold/30 px-4 py-2.5 text-sm outline-none focus:border-forest"
+              className="w-full rounded-xl border border-gold/30 px-4 py-2.5 text-sm outline-none focus:border-maroon"
             />
           </label>
 
@@ -360,11 +360,29 @@ export default function AdminProductsPage() {
 
           <div className="flex gap-6">
             <label className="flex items-center gap-2 text-sm">
-              <input type="checkbox" checked={form.isFeatured} onChange={(e) => setForm({ ...form, isFeatured: e.target.checked })} />
+              <input
+                type="checkbox"
+                checked={form.isFeatured ?? false}
+                onChange={(e) =>
+                  setForm({
+                    ...form,
+                    isFeatured: e.target.checked,
+                  })
+                }
+              />
               Featured on homepage
             </label>
             <label className="flex items-center gap-2 text-sm">
-              <input type="checkbox" checked={form.isActive} onChange={(e) => setForm({ ...form, isActive: e.target.checked })} />
+              <input
+              type="checkbox"
+              checked={form.isActive ?? true}
+              onChange={(e) =>
+                setForm({
+                  ...form,
+                  isActive: e.target.checked,
+                })
+              }
+            />
               Active (visible in store)
             </label>
           </div>
@@ -402,7 +420,7 @@ function FormField({ label, value, onChange, required, type = "text", placeholde
         value={value}
         placeholder={placeholder}
         onChange={(e) => onChange(e.target.value)}
-        className="w-full rounded-xl border border-gold/30 px-4 py-2.5 text-sm outline-none focus:border-forest"
+        className="w-full rounded-xl border border-gold/30 px-4 py-2.5 text-sm outline-none focus:border-maroon"
       />
     </label>
   );

@@ -19,7 +19,7 @@ function ShippingMarquee({ settings }) {
 
   const messages = [
     `🚚 FREE SHIPPING on orders above ₹${freeShipping}`,
-    `🌿 100% Natural & Organic Products`,
+    `❤️ Homemade with Love & Fresh Ingredients`,
     `✅ Pan India Delivery`,
   ];
 
@@ -27,8 +27,8 @@ function ShippingMarquee({ settings }) {
   const track = [...messages, ...messages];
 
   return (
-    <div className="relative overflow-hidden bg-green-700 py-2 text-ivory">
-      <div className="marquee-track flex w-max items-center gap-12 whitespace-nowrap px-4 text-xs font-semibold tracking-wide md:text-sm">
+<div className="relative overflow-hidden bg-[#7A1C1C] py-2 text-white">
+  <div className="marquee-track flex w-max items-center gap-12 whitespace-nowrap px-4 text-xs font-semibold tracking-wide md:text-sm">
         {track.map((msg, idx) => (
           <span key={idx} className="flex items-center gap-2">
             {msg}
@@ -62,7 +62,7 @@ export default function Navbar({ settings }) {
   const [open, setOpen] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);
   const [query, setQuery] = useState("");
-  const storeName = settings?.storeName || "KMC Iyarkai Creation";
+  const storeName = settings?.storeName || "Rani's Cook House";
   const [brand, tagline] = storeName.includes(" ")
     ? [storeName.split(" ")[0], storeName.split(" ").slice(1).join(" ")]
     : [storeName, ""];
@@ -81,25 +81,22 @@ export default function Navbar({ settings }) {
     <>
       <ShippingMarquee settings={settings} />
 
-      <header className="sticky top-0 z-40 border-b border-gold/20 bg-ivory/90 backdrop-blur-md">
-        <div className="mx-auto flex max-w-7xl items-center justify-between px-5 py-3 md:px-8">
+<header className="sticky top-0 z-40 border-b border-[#D8C2A8] bg-[#FDF7ED]/95 backdrop-blur-md">        <div className="mx-auto flex max-w-7xl items-center justify-between px-5 py-3 md:px-8">
           <Link href="/" className="flex items-center gap-3">
             <Image
-              src="/images/logo.jpeg"
+              src="/images/logo.png"
               alt={storeName}
-              width={55}
-              height={55}
+              width={65}
+              height={65}
               priority
-              className="h-12 w-12 object-contain"
+              className="h-14 w-14 rounded-full object-cover"
             />
 
             <div className="leading-tight">
-              <h1 className="font-display text-xl font-bold text-forest">
-                {brand}
+<h1 className="font-display text-[34px] font-bold leading-none text-[#6B1E1E]">                {brand}
               </h1>
               {tagline && (
-                <p className="text-xs uppercase tracking-[0.25em] text-muted">
-                  {tagline}
+<p className="mt-1 text-[12px] uppercase tracking-[0.45em] text-[#B8872E]">                  {tagline}
                 </p>
               )}
             </div>
@@ -110,8 +107,7 @@ export default function Navbar({ settings }) {
               <Link
                 key={l.href}
                 href={l.href}
-                className="text-sm font-medium text-ink/80 transition hover:text-forest"
-              >
+className="text-sm font-medium text-[#3B3026] transition hover:text-[#7A1C1C]"              >
                 {l.label}
               </Link>
             ))}
@@ -123,8 +119,7 @@ export default function Navbar({ settings }) {
               {searchOpen ? (
                 <form
                   onSubmit={handleSearchSubmit}
-                  className="flex items-center overflow-hidden rounded-full border border-gold/30 bg-white pl-4 pr-1 py-1.5 transition-all"
-                >
+className="flex items-center overflow-hidden rounded-full border border-[#D8C2A8] bg-white ..."                >
                   <input
                     autoFocus
                     type="text"
@@ -148,8 +143,7 @@ export default function Navbar({ settings }) {
               ) : (
                 <button
                   onClick={() => setSearchOpen(true)}
-                  className="flex h-10 w-10 items-center justify-center rounded-full border border-gold/30 text-forest transition hover:bg-champagne"
-                  aria-label="Search"
+className="flex h-10 w-10 items-center justify-center rounded-full border border-[#D8C2A8] text-[#7A1C1C] transition hover:bg-[#F5EBDD]"                  aria-label="Search"
                 >
                   <Search className="h-5 w-5" />
                 </button>
@@ -159,27 +153,24 @@ export default function Navbar({ settings }) {
             {/* Mobile search toggle icon (next to cart) */}
             <button
               onClick={() => setSearchOpen((v) => !v)}
-              className="flex h-10 w-10 items-center justify-center rounded-full border border-gold/30 text-forest transition hover:bg-champagne md:hidden"
-              aria-label="Search"
+className="flex h-10 w-10 items-center justify-center rounded-full border border-[#D8C2A8] text-[#7A1C1C] transition hover:bg-[#F5EBDD] md:hidden"              aria-label="Search"
             >
               {searchOpen ? <X className="h-5 w-5" /> : <Search className="h-5 w-5" />}
             </button>
 
             <Link
               href="/cart"
-              className="relative flex h-10 w-10 items-center justify-center rounded-full border border-gold/30 text-forest transition hover:bg-champagne"
-              aria-label="View cart"
+className="relative flex h-10 w-10 items-center justify-center rounded-full border border-[#D8C2A8] text-[#7A1C1C] transition hover:bg-[#F5EBDD]"              aria-label="View cart"
             >
               <BagIcon className="h-5 w-5" />
               {count > 0 && (
-                <span className="absolute -right-1 -top-1 flex h-5 w-5 items-center justify-center rounded-full bg-terracotta text-[10px] font-semibold text-ivory">
+                <span className="absolute -right-1 -top-1 flex h-5 w-5 items-center justify-center rounded-full bg-[#7A1C1C] text-[10px] font-semibold text-ivory">
                   {count}
                 </span>
               )}
             </Link>
             <button
-              className="flex h-10 w-10 items-center justify-center rounded-full border border-gold/30 md:hidden"
-              onClick={() => setOpen(!open)}
+className="flex h-10 w-10 items-center justify-center rounded-full border border-[#D8C2A8] text-[#7A1C1C] md:hidden"              onClick={() => setOpen(!open)}
               aria-label="Toggle menu"
             >
               <div className="flex flex-col justify-between h-4 w-5">
@@ -205,8 +196,7 @@ export default function Navbar({ settings }) {
 
         {/* Mobile search bar row (below header) */}
         {searchOpen && (
-          <div className="border-t border-gold/20 bg-ivory px-5 py-3 md:hidden">
-            <form
+<div className="border-t border-[#D8C2A8] bg-[#FDF7ED] px-5 py-3 md:hidden">            <form
               onSubmit={handleSearchSubmit}
               className="flex items-center gap-2 rounded-full border border-gold/30 bg-white px-4 py-2.5"
             >
@@ -224,14 +214,12 @@ export default function Navbar({ settings }) {
         )}
 
         {open && (
-          <nav className="flex flex-col gap-1 border-t border-gold/20 bg-ivory px-5 py-3 md:hidden">
-            {LINKS.map((l) => (
+<nav className="flex flex-col gap-1 border-t border-[#D8C2A8] bg-[#FDF7ED] px-5 py-3 md:hidden">            {LINKS.map((l) => (
               <Link
                 key={l.href}
                 href={l.href}
                 onClick={() => setOpen(false)}
-                className="rounded-lg px-2 py-2 text-sm font-medium text-ink/80 hover:bg-champagne"
-              >
+className="rounded-lg px-2 py-2 text-sm font-medium text-[#3B3026] hover:bg-[#F5EBDD] hover:text-[#7A1C1C]"              >
                 {l.label}
               </Link>
             ))}

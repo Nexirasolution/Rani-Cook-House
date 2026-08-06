@@ -39,7 +39,7 @@ export default function AdminLoginPage() {
           <span className="badge-stamp flex h-14 w-14 items-center justify-center border-gold/40 bg-forest text-ivory">
             <LeafIcon className="h-6 w-6" />
           </span>
-          <h1 className="mt-4 font-display text-xl font-bold text-forest">KMC Admin</h1>
+          <h1 className="mt-4 font-display text-xl font-bold text-maroon">Rani's Cook House Admin</h1>
           <p className="text-xs text-muted">Sign in to manage your store</p>
         </div>
 
@@ -51,7 +51,7 @@ export default function AdminLoginPage() {
               required
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              className="w-full rounded-xl border border-gold/30 px-4 py-2.5 text-sm outline-none focus:border-forest"
+              className="w-full rounded-xl border border-gold/30 px-4 py-2.5 text-sm outline-none focus:border-maroon"
             />
           </label>
           <label className="block">

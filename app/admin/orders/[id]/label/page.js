@@ -42,7 +42,7 @@ export default function ShippingLabelPage() {
     return (
       <div className="p-8 text-center">
         <p className="text-sm text-muted">{error || "Order not found."}</p>
-        <button onClick={() => router.back()} className="mt-3 text-xs font-semibold text-forest hover:underline">
+        <button onClick={() => router.back()} className="mt-3 text-xs font-semibold text-maroon hover:underline">
           Go back
         </button>
       </div>
@@ -53,7 +53,7 @@ export default function ShippingLabelPage() {
     <div className="min-h-screen bg-champagne/40 px-4 py-6 sm:px-6">
       {/* Screen-only controls, hidden when printing */}
       <div className="mx-auto mb-4 flex max-w-md items-center justify-between print:hidden">
-        <button onClick={() => router.back()} className="text-sm font-semibold text-ink/70 hover:text-forest">
+        <button onClick={() => router.back()} className="text-sm font-semibold text-ink/70 hover:text-maroon">
           &larr; Back
         </button>
         <button

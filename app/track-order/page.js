@@ -63,7 +63,7 @@ export default function TrackOrderPage() {
           <p className="text-xs font-semibold uppercase tracking-[0.25em] text-gold-dark">
             Order Status
           </p>
-          <h1 className="mt-2 font-display text-3xl font-bold text-forest md:text-4xl">Track Your Order</h1>
+          <h1 className="mt-2 font-display text-3xl font-bold text-maroon md:text-4xl">Track Your Order</h1>
           <p className="mt-3 text-sm text-muted">
             Enter the phone number used while placing your order.
           </p>
@@ -76,14 +76,14 @@ export default function TrackOrderPage() {
             placeholder="10-digit phone number"
             value={phone}
             onChange={(e) => setPhone(e.target.value)}
-            className="flex-1 rounded-full border border-gold/30 bg-white px-5 py-3 text-sm outline-none focus:border-forest"
+            className="flex-1 rounded-full border border-gold/30 bg-white px-5 py-3 text-sm outline-none focus:border-maroon"
           />
           <input
             type="text"
             placeholder="Order number (optional)"
             value={orderNumber}
             onChange={(e) => setOrderNumber(e.target.value)}
-            className="flex-1 rounded-full border border-gold/30 bg-white px-5 py-3 text-sm outline-none focus:border-forest"
+            className="flex-1 rounded-full border border-gold/30 bg-white px-5 py-3 text-sm outline-none focus:border-maroon"
           />
           <button
             type="submit"

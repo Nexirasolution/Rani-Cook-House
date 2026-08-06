@@ -128,7 +128,7 @@ export default function SettingsPage() {
     <div className="min-h-screen bg-[#F8F7F2] p-5 md:p-8">
       <div className="max-w-6xl mx-auto">
 
-        <h1 className="text-3xl md:text-4xl font-bold text-green-700 mb-8">
+        <h1 className="text-3xl md:text-4xl font-bold text-maroon mb-8">
           Store Settings
         </h1>
 
@@ -143,7 +143,7 @@ export default function SettingsPage() {
                 name="storeName"
                 value={settings.storeName}
                 onChange={handleChange}
-                className="w-full border rounded-xl px-4 py-3 focus:ring-2 focus:ring-green-600 outline-none"
+                className="w-full border rounded-xl px-4 py-3 focus:ring-2 focus:ring-maroon outline-none"
               />
             </div>
 
@@ -237,7 +237,7 @@ export default function SettingsPage() {
                 <button
                   type="button"
                   onClick={addStateRate}
-                  className="rounded-xl border border-green-700 px-4 py-1.5 text-sm font-semibold text-green-700 hover:bg-green-50"
+                  className="rounded-xl border border-maroon px-4 py-1.5 text-sm font-semibold text-maroon hover:bg-maroon/10"
                 >
                   + Add State Rate
                 </button>
@@ -354,7 +354,7 @@ export default function SettingsPage() {
             <button
               onClick={saveSettings}
               disabled={saving}
-              className="rounded-xl bg-green-700 px-8 py-3 font-semibold text-white transition hover:bg-green-800 disabled:opacity-60"
+              className="rounded-xl bg-maroon px-8 py-3 font-semibold text-white transition hover:bg-maroonDark disabled:opacity-60"
             >
               {saving ? "Saving..." : "Save Settings"}
             </button>
