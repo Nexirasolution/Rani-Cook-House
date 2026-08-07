@@ -4,43 +4,102 @@ import { createContext, useContext, useEffect, useState } from "react";
 
 const CartContext = createContext(null);
 
-// Change the storage key once so old cart data doesn't remain
 const STORAGE_KEY = "rani_cart_v2";
 
 export function CartProvider({ children }) {
   const [items, setItems] = useState([]);
   const [hydrated, setHydrated] = useState(false);
 
+  // Load cart from localStorage
   useEffect(() => {
     try {
       const saved = localStorage.getItem(STORAGE_KEY);
+
       if (saved) {
-        setItems(JSON.parse(saved));
+        const parsed = JSON.parse(saved);
+
+        if (Array.isArray(parsed)) {
+          setItems(parsed);
+        }
       }
     } catch (err) {
-      console.error(err);
+      console.error("Failed to load cart:", err);
+      localStorage.removeItem(STORAGE_KEY);
     }
+
     setHydrated(true);
   }, []);
 
+  // Save cart to localStorage
   useEffect(() => {
-    if (hydrated) {
+    if (!hydrated) return;
+
+    try {
       localStorage.setItem(STORAGE_KEY, JSON.stringify(items));
+    } catch (err) {
+      console.error("Failed to save cart:", err);
     }
   }, [items, hydrated]);
 
+  function getProductImage(product) {
+    // media: [{ url, publicId }]
+    if (product?.media?.[0]) {
+      const media = product.media[0];
+
+      if (typeof media === "string") {
+        return media;
+      }
+
+      if (media?.url) {
+        return media.url;
+      }
+    }
+
+    // images: [{ url, publicId }]
+    if (product?.images?.[0]) {
+      const image = product.images[0];
+
+      if (typeof image === "string") {
+        return image;
+      }
+
+      if (image?.url) {
+        return image.url;
+      }
+    }
+
+    return "";
+  }
+
   function addItem(product, quantity = 1) {
+    if (!product?._id) {
+      console.error("Invalid product:", product);
+      return;
+    }
+
+    const image = getProductImage(product);
+
+    console.log("Adding product to cart:", {
+      id: product._id,
+      name: product.name,
+      image,
+    });
+
     setItems((prev) => {
-      const existing = prev.find((i) => i.productId === product._id);
+      const existing = prev.find(
+        (item) => item.productId === product._id
+      );
 
       if (existing) {
-        return prev.map((i) =>
-          i.productId === product._id
+        return prev.map((item) =>
+          item.productId === product._id
             ? {
-                ...i,
-                quantity: i.quantity + quantity,
+                ...item,
+                quantity: item.quantity + quantity,
+                // Update image if old cart item doesn't have one
+                image: item.image || image,
               }
-            : i
+            : item
         );
       }
 
@@ -48,22 +107,19 @@ export function CartProvider({ children }) {
         ...prev,
         {
           productId: product._id,
-          name: product.name,
-          price: product.price,
-          unit: product.unit,
-
-          // Supports both media[] and images[]
-          image:
-            product.media?.[0]?.url ||
-            product.images?.[0]?.url ||
-            "",
-
-          stock: product.stock,
+          name: product.name || "",
+          price: Number(product.price) || 0,
+          unit: product.unit || "",
+          image,
+          stock: Number(product.stock) || 0,
           quantity,
         },
       ];
     });
   }
+
+  // Alias so ProductCard can use addToCart
+  const addToCart = addItem;
 
   function updateQuantity(productId, quantity) {
     if (quantity <= 0) {
@@ -74,7 +130,10 @@ export function CartProvider({ children }) {
     setItems((prev) =>
       prev.map((item) =>
         item.productId === productId
-          ? { ...item, quantity }
+          ? {
+              ...item,
+              quantity,
+            }
           : item
       )
     );
@@ -91,12 +150,13 @@ export function CartProvider({ children }) {
   }
 
   const subtotal = items.reduce(
-    (sum, item) => sum + item.price * item.quantity,
+    (sum, item) =>
+      sum + Number(item.price || 0) * Number(item.quantity || 0),
     0
   );
 
   const count = items.reduce(
-    (sum, item) => sum + item.quantity,
+    (sum, item) => sum + Number(item.quantity || 0),
     0
   );
 
@@ -105,6 +165,7 @@ export function CartProvider({ children }) {
       value={{
         items,
         addItem,
+        addToCart,
         updateQuantity,
         removeItem,
         clearCart,

@@ -6,7 +6,7 @@ import Image from "next/image";
 export default function MediaUploader({
   media = [],
   onChange,
-  folder = "rani cook",
+  folder = "rani-cook",
   multiple = true,
 }) {
   const inputRef = useRef(null);

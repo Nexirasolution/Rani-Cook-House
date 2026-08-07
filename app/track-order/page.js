@@ -1,7 +1,6 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import { LeafIcon } from "@/components/Icons";
 
@@ -57,7 +56,7 @@ export default function TrackOrderPage() {
 
   return (
     <>
-      <Navbar settings={settings} />
+      
       <section className="mx-auto max-w-3xl px-5 py-12 md:px-8">
         <div className="text-center">
           <p className="text-xs font-semibold uppercase tracking-[0.25em] text-gold-dark">

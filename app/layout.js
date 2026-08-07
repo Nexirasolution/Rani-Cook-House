@@ -2,6 +2,8 @@ import { Playfair_Display, Inter } from "next/font/google";
 import "./globals.css";
 
 import { CartProvider } from "@/context/CartContext";
+import Navbar from "@/components/Navbar";
+import Footer from "@/components/Footer";
 import FloatingWhatsApp from "@/components/FloatingWhatsApp";
 import BottomNav from "@/components/BottomNav";
 import { getSettings } from "@/lib/settings";
@@ -90,8 +92,11 @@ export default async function RootLayout({ children }) {
     >
       <body className="min-h-screen w-full overflow-x-hidden bg-[#faf5eb]">
         <CartProvider>
+          <Navbar settings={settings} />
+
           {children}
 
+          <Footer settings={settings} />
           <FloatingWhatsApp />
           <BottomNav />
         </CartProvider>

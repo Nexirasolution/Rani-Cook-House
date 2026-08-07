@@ -3,7 +3,6 @@ import Image from "next/image";
 import { connectDB } from "@/lib/mongodb";
 import Category from "@/models/Category";
 import Product from "@/models/Product";
-import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import ProductCard from "@/components/ProductCard";
 import { CATEGORY_ICONS, LeafIcon } from "@/components/Icons";
@@ -57,7 +56,7 @@ export default async function HomePage() {
 
   return (
     <>
-      <Navbar settings={settings} />
+      
 
       <HeroSlider />
 

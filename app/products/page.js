@@ -1,4 +1,3 @@
-import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import ProductsGrid from "@/components/ProductsGrid";
 import { getSettings } from "@/lib/settings";
@@ -15,7 +14,6 @@ export default async function ProductsPage({ searchParams }) {
 
   return (
     <>
-      <Navbar settings={settings} />
 
       <section className="mx-auto max-w-7xl px-5 py-12 md:px-8">
         <div className="mb-10 text-center">
