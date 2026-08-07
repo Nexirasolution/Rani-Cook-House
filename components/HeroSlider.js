@@ -1,5 +1,4 @@
 "use client";
-
 import Image from "next/image";
 import Link from "next/link";
 import { useState, useEffect } from "react";
@@ -10,36 +9,81 @@ const playfair = Playfair_Display({
   weight: ["400", "500"],
 });
 
-const SLIDES = [
-  {
-    image: "/hero/hero-banner.png",
-    heading: "Authentic Homemade",
-    headingLine2: "Pickles ",
-    ctaLabel: "Shop Now",
-    ctaHref: "/products",
-  },
-  
-];
-
 export default function HeroSlider() {
+  const [slides, setSlides] = useState([]);
   const [active, setActive] = useState(0);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    if (SLIDES.length <= 1) return;
-    const timer = setInterval(() => {
-      setActive((i) => (i + 1) % SLIDES.length);
-    }, 4500);
-    return () => clearInterval(timer);
+    async function loadBanners() {
+      try {
+        const res = await fetch("/api/banners?activeOnly=true", {
+          cache: "no-store",
+        });
+        const data = await res.json();
+
+        if (res.ok && data.banners?.length) {
+          setSlides(
+            data.banners.map((b) => ({
+              image: b.image?.url || "/hero/hero-banner.png",
+              subtitle: b.subtitle || "",
+              heading: b.title || "",
+              headingLine2: "",
+              ctaLabel: b.ctaText || "Shop Now",
+              ctaHref: b.ctaLink || "/products",
+            }))
+          );
+        } else {
+          // Fallback slide if no banners exist
+          setSlides([
+            {
+              image: "/hero/hero-banner.png",
+              heading: "Authentic Homemade",
+              headingLine2: "Pickles",
+              ctaLabel: "Shop Now",
+              ctaHref: "/products",
+            },
+          ]);
+        }
+      } catch (err) {
+        console.error("Failed to load banners:", err);
+        setSlides([
+          {
+            image: "/hero/hero-banner.png",
+            heading: "Authentic Homemade",
+            headingLine2: "Pickles",
+            ctaLabel: "Shop Now",
+            ctaHref: "/products",
+          },
+        ]);
+      } finally {
+        setLoading(false);
+      }
+    }
+
+    loadBanners();
   }, []);
 
-  const slide = SLIDES[active];
+  useEffect(() => {
+    if (slides.length <= 1) return;
+    const timer = setInterval(() => {
+      setActive((i) => (i + 1) % slides.length);
+    }, 4500);
+    return () => clearInterval(timer);
+  }, [slides.length]);
+
+  if (loading || slides.length === 0) {
+    return <section className="relative h-[36vh] bg-champagne sm:h-[55vh] lg:h-[70vh]" />;
+  }
+
+  const slide = slides[active];
 
   return (
     <section className="relative h-[36vh] overflow-hidden sm:h-[55vh] lg:h-[70vh]">
       {/* Background */}
       <Image
         src={slide.image}
-        alt="Rani's Cook House"
+        alt={slide.heading || "Rani's Cook House"}
         fill
         priority
         className="object-cover object-center"
@@ -51,21 +95,24 @@ export default function HeroSlider() {
       {/* Content */}
       <div className="relative z-10 mx-auto flex h-full max-w-7xl items-center px-5 sm:px-10 lg:px-16">
         <div className="w-full max-w-[280px] sm:max-w-md md:max-w-xl lg:max-w-2xl">
-          {/* Tagline */}
-          <p className="mb-2 text-[10px] font-medium uppercase tracking-[0.1em] text-white/80 sm:mb-3 sm:text-sm sm:tracking-[0.2em]">
-            {slide.subtitle}
-          </p>
+          {slide.subtitle && (
+            <p className="mb-2 text-[10px] font-medium uppercase tracking-[0.1em] text-white/80 sm:mb-3 sm:text-sm sm:tracking-[0.2em]">
+              {slide.subtitle}
+            </p>
+          )}
 
-          {/* Heading */}
           <h1
             className={`${playfair.className} text-[1.65rem] font-normal leading-[1.2] tracking-normal text-white sm:text-4xl md:text-5xl lg:text-6xl`}
           >
             {slide.heading}
-            <br />
-            {slide.headingLine2}
+            {slide.headingLine2 && (
+              <>
+                <br />
+                {slide.headingLine2}
+              </>
+            )}
           </h1>
 
-          {/* Button */}
           <div className="mt-5 flex flex-wrap gap-4 sm:mt-8">
             <Link
               href={slide.ctaHref}
@@ -77,10 +124,9 @@ export default function HeroSlider() {
         </div>
       </div>
 
-      {/* Slide indicators (dots) */}
-      {SLIDES.length > 1 && (
+      {slides.length > 1 && (
         <div className="absolute bottom-3 left-1/2 z-10 flex -translate-x-1/2 gap-2 sm:bottom-6">
-          {SLIDES.map((_, i) => (
+          {slides.map((_, i) => (
             <button
               key={i}
               onClick={() => setActive(i)}
