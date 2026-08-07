@@ -3,7 +3,6 @@ import Image from "next/image";
 import { connectDB } from "@/lib/mongodb";
 import Category from "@/models/Category";
 import Product from "@/models/Product";
-import Footer from "@/components/Footer";
 import ProductCard from "@/components/ProductCard";
 import { CATEGORY_ICONS, LeafIcon } from "@/components/Icons";
 import HeroSlider from "@/components/HeroSlider";
@@ -159,7 +158,6 @@ export default async function HomePage() {
         </div>
       </section>
 
-      <Footer />
     </>
   );
 }

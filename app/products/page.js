@@ -1,4 +1,3 @@
-import Footer from "@/components/Footer";
 import ProductsGrid from "@/components/ProductsGrid";
 import { getSettings } from "@/lib/settings";
 
@@ -35,7 +34,6 @@ export default async function ProductsPage({ searchParams }) {
 
       </section>
 
-      <Footer />
     </>
   );
 }

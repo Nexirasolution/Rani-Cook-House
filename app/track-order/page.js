@@ -1,7 +1,6 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import Footer from "@/components/Footer";
 import { LeafIcon } from "@/components/Icons";
 
 const STATUS_STEPS = ["pending", "confirmed", "packed", "shipped", "delivered"];
@@ -204,7 +203,6 @@ export default function TrackOrderPage() {
           </div>
         )}
       </section>
-      <Footer />
     </>
   );
 }

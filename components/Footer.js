@@ -138,7 +138,7 @@ export default function Footer({ settings }) {
 
       {/* Bottom */}
 
-      <div className="border-t border-white/15 py-6 text-center px-4">
+<div className="border-t border-white/15 px-4 py-6 pb-28 text-center md:pb-6">
 
   <p className="text-xs sm:text-sm text-white/80">
     © {new Date().getFullYear()} Rani's Cook House. All rights reserved.
