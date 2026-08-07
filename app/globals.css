@@ -2,37 +2,82 @@
 @tailwind components;
 @tailwind utilities;
 
-* {
+/* ================================
+   GLOBAL RESET
+================================ */
+
+*,
+*::before,
+*::after {
   box-sizing: border-box;
 }
 
 html {
+  width: 100%;
+  max-width: 100%;
+  overflow-x: hidden;
   scroll-behavior: smooth;
 }
 
 body {
-  background-color: #F7F1E4;
+  width: 100%;
+  max-width: 100%;
+  min-height: 100vh;
+  margin: 0;
+  overflow-x: hidden;
+
+  background-color: #f7f1e4;
+
   background-image:
-    radial-gradient(circle at 1px 1px, rgba(36,26,18,0.05) 1px, transparent 0);
+    radial-gradient(
+      circle at 1px 1px,
+      rgba(36, 26, 18, 0.05) 1px,
+      transparent 0
+    );
+
   background-size: 22px 22px;
 }
 
-::selection {
-  background: #C98A1F;
-  color: #F7F1E4;
+/* Prevent images from overflowing */
+
+img,
+video,
+svg {
+  max-width: 100%;
 }
 
+/* ================================
+   TEXT SELECTION
+================================ */
+
+::selection {
+  background: #c98a1f;
+  color: #f7f1e4;
+}
+
+/* ================================
+   BUTTONS
+================================ */
+
 .btn-primary {
-  @apply inline-flex items-center justify-center gap-2 bg-maroon text-cream px-6 py-3 rounded-full font-semibold tracking-wide transition-all hover:bg-maroonDark active:scale-[0.98];
+  @apply inline-flex items-center justify-center gap-2 rounded-full bg-maroon px-6 py-3 font-semibold tracking-wide text-cream transition-all hover:bg-maroonDark active:scale-[0.98];
 }
 
 .btn-outline {
-  @apply inline-flex items-center justify-center gap-2 border-2 border-maroon text-maroon px-6 py-3 rounded-full font-semibold tracking-wide transition-all hover:bg-maroon hover:text-cream active:scale-[0.98];
+  @apply inline-flex items-center justify-center gap-2 rounded-full border-2 border-maroon px-6 py-3 font-semibold tracking-wide text-maroon transition-all hover:bg-maroon hover:text-cream active:scale-[0.98];
 }
 
+/* ================================
+   SECTION LABEL
+================================ */
+
 .section-label {
-  @apply text-goldDark tracking-[0.25em] uppercase text-xs font-bold;
+  @apply text-xs font-bold uppercase tracking-[0.25em] text-goldDark;
 }
+
+/* ================================
+   FOCUS
+================================ */
 
 a:focus-visible,
 button:focus-visible,
@@ -48,6 +93,60 @@ select:focus-visible {
   box-shadow: none !important;
 }
 
+/* ================================
+   MOBILE RESPONSIVE
+================================ */
+
+@media (max-width: 768px) {
+  body {
+    overflow-x: hidden;
+  }
+
+  /* Prevent long text from creating overflow */
+
+  h1,
+  h2,
+  h3,
+  h4,
+  p {
+    max-width: 100%;
+    overflow-wrap: break-word;
+  }
+
+  /* Buttons should never exceed screen */
+
+  button,
+  .btn-primary,
+  .btn-outline {
+    max-width: 100%;
+  }
+}
+
+/* ================================
+   SMALL MOBILE
+================================ */
+
+@media (max-width: 480px) {
+  .btn-primary,
+  .btn-outline {
+    padding-left: 20px;
+    padding-right: 20px;
+    padding-top: 11px;
+    padding-bottom: 11px;
+    font-size: 14px;
+  }
+}
+
+/* ================================
+   REDUCED MOTION
+================================ */
+
 @media (prefers-reduced-motion: reduce) {
-  * { animation: none !important; transition: none !important; }
+  *,
+  *::before,
+  *::after {
+    animation: none !important;
+    transition: none !important;
+    scroll-behavior: auto !important;
+  }
 }
