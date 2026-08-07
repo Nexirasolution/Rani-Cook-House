@@ -4,7 +4,7 @@ import cloudinary from "@/lib/cloudinary";
 export async function POST(req) {
   try {
     const body = await req.json().catch(() => ({}));
-    const folder = body.folder || "kmc-products";
+    const folder = body.folder || "rani-products";
     const timestamp = Math.round(Date.now() / 1000);
 
     const paramsToSign = {

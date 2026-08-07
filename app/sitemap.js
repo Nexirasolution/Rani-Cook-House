@@ -2,7 +2,7 @@ import { connectDB } from "@/lib/mongodb";
 import Product from "@/models/Product";
 import Category from "@/models/Category";
 
-const BASE_URL = "https://www.kmciyarkaicreation.com";
+const BASE_URL = "https://www.raniscookhouse.com";
 
 export default async function sitemap() {
   await connectDB();

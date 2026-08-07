@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { jwtVerify } from "jose";
 
-const COOKIE_NAME = "kmc_admin_token";
+const COOKIE_NAME = "rani_admin_token";
 const JWT_SECRET = new TextEncoder().encode(process.env.JWT_SECRET || "dev_secret_change_me");
 
 async function isValidToken(token) {

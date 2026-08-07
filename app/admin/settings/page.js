@@ -5,7 +5,7 @@ import { INDIAN_STATES } from "@/lib/indianStates";
 
 const DEFAULT_SETTINGS = {
   storeName: "Rani's Cook Food",
-  email: "admin@kmcorganicfarm.com",
+  email: "ranipickles13@gmail.com",
   phone: "",
   whatsapp: "",
   address: "",
@@ -16,7 +16,7 @@ const DEFAULT_SETTINGS = {
   instagram: "",
   facebook: "",
   youtube: "",
-  seoTitle: "KMC Iyarkai Creation",
+  seoTitle: "RANI'S COOK HOUSE",
   seoDescription: "",
   maintenanceMode: false,
 };

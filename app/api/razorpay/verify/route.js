@@ -6,7 +6,7 @@ import Order from "@/models/Order";
 import Product from "@/models/Product";
 
 async function generateOrderNumber() {
-  const prefix = "KMC";
+  const prefix = "Rani";
   const date = new Date();
   const datePart = `${date.getFullYear().toString().slice(-2)}${(date.getMonth() + 1)
     .toString()

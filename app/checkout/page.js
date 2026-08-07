@@ -123,7 +123,7 @@ export default function CheckoutPage() {
         key: process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID,
         amount: rzpOrder.amount,
         currency: rzpOrder.currency,
-        name: settings.storeName || "KMC Iyarkai Creation",
+        name: settings.storeName || "RANI'S COOK HOUSE",
         description: "Order Payment",
         order_id: rzpOrder.id,
         prefill: {
@@ -196,7 +196,7 @@ export default function CheckoutPage() {
           </span>
           <h1 className="mt-6 font-display text-3xl font-bold text-maroon">Order Placed!</h1>
           <p className="mt-3 text-muted">
-            Thank you for choosing {settings.storeName || "KMC Iyarkai Creation"}. Your order number is:
+            Thank you for choosing {settings.storeName || "RANI'S COOK HOUSE"}. Your order number is:
           </p>
           <p className="mt-2 font-display text-xl font-bold text-terracotta">{placedOrder.orderNumber}</p>
           <p className="mt-4 text-sm text-muted">

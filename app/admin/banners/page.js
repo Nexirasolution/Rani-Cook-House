@@ -150,13 +150,14 @@ export default function AdminBannersPage() {
                 <div className="flex items-center gap-4 flex-1 min-w-0">
                   <div className="h-20 w-32 shrink-0 overflow-hidden rounded-xl bg-champagne">
                     {b.image?.url ? (
-                      <Image
-                        src={b.image.url}
-                        alt={b.title}
-                        width={200}
-                        height={120}
-                        className="h-full w-full object-cover"
-                      />
+                   <Image
+                      src={imageUrl}
+                      alt={banner.title}
+                      width={160}
+                      height={100}
+                      unoptimized
+                      className="h-[100px] w-[160px] rounded-xl object-cover"
+                    />
                     ) : (
                       <div className="flex h-full w-full items-center justify-center text-xs text-muted">
                         No image
@@ -242,7 +243,7 @@ export default function AdminBannersPage() {
             <ImageUploader
               images={form.image}
               onChange={(imgs) => setForm({ ...form, image: imgs })}
-              folder="kmc-banners"
+              folder="rani-banners"
               multiple={false}
             />
           </div>

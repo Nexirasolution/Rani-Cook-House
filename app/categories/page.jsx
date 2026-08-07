@@ -29,8 +29,9 @@ async function getCategories() {
 }
 
 export const metadata = {
-  title: "Shop by Category | KMC Iyarkai Creation",
-  description: "Browse all product categories — handmade, natural, and eco-friendly.",
+  title: "Shop by Category | Rani's Cook House",
+  description:
+    "Explore Rani's Cook House categories featuring homemade pickles, dry fish powder, Avalose Podi, traditional conch meat, dry fruits, nuts, and authentic homemade foods.",
 };
 
 export default async function CategoriesPage({ searchParams }) {
