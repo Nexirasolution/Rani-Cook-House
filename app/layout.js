@@ -1,11 +1,7 @@
 import { Playfair_Display, Inter } from "next/font/google";
 import "./globals.css";
 
-import { CartProvider } from "@/context/CartContext";
-import Navbar from "@/components/Navbar";
-import Footer from "@/components/Footer";
-import FloatingWhatsApp from "@/components/FloatingWhatsApp";
-import BottomNav from "@/components/BottomNav";
+import SiteChrome from "@/components/SiteChrome";
 import { getSettings } from "@/lib/settings";
 
 const playfair = Playfair_Display({
@@ -91,15 +87,7 @@ export default async function RootLayout({ children }) {
       className={`${playfair.variable} ${inter.variable}`}
     >
       <body className="min-h-screen w-full overflow-x-hidden bg-[#faf5eb]">
-        <CartProvider>
-          <Navbar settings={settings} />
-
-          {children}
-
-          <Footer settings={settings} />
-          <FloatingWhatsApp />
-          <BottomNav />
-        </CartProvider>
+        <SiteChrome settings={settings}>{children}</SiteChrome>
       </body>
     </html>
   );
