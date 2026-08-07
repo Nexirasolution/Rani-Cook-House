@@ -16,6 +16,7 @@ export default function ProductCard({ product }) {
   const handleAddToCart = (e) => {
     e.preventDefault();
     e.stopPropagation();
+
     if (outOfStock) return;
 
     addItem(product, 1);
@@ -29,26 +30,31 @@ export default function ProductCard({ product }) {
       href={`/products/${product.slug}`}
       className="group block overflow-hidden rounded-2xl border border-gold/20 bg-white transition-all duration-300 hover:-translate-y-1 hover:shadow-xl"
     >
-      <div className="relative aspect-square overflow-hidden bg-champagne">
+      {/* Product Image */}
+      <div className="relative aspect-[3/4] overflow-hidden bg-champagne">
         {img ? (
           <Image
             src={img}
             alt={product.name}
-            fill
-            className="object-cover transition-transform duration-500 group-hover:scale-105"
+            width={500}
+            height={667}
+            unoptimized
+            className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
           />
         ) : (
-          <div className="flex h-full w-full items-center justify-center text-maroon/30">
-            <LeafIcon className="h-12 w-12" />
+          <div className="flex h-full w-full items-center justify-center">
+            <LeafIcon className="h-10 w-10 text-maroon/30" />
           </div>
         )}
 
+        {/* Out of Stock */}
         {outOfStock && (
           <span className="absolute left-3 top-3 rounded-full bg-maroon px-3 py-1 text-[10px] font-bold uppercase tracking-wide text-white">
             Out of Stock
           </span>
         )}
 
+        {/* Floating Add Button */}
         {!outOfStock && (
           <button
             onClick={handleAddToCart}
@@ -59,11 +65,16 @@ export default function ProductCard({ product }) {
                 : "bg-white text-maroon opacity-0 hover:bg-maroon hover:text-white group-hover:opacity-100"
             }`}
           >
-            {added ? <Check className="h-4 w-4" /> : <ShoppingBag className="h-4 w-4" />}
+            {added ? (
+              <Check className="h-4 w-4" />
+            ) : (
+              <ShoppingBag className="h-4 w-4" />
+            )}
           </button>
         )}
       </div>
 
+      {/* Product Details */}
       <div className="p-4">
         <h3 className="line-clamp-2 font-display text-lg font-semibold text-maroon">
           {product.name}
@@ -88,6 +99,7 @@ export default function ProductCard({ product }) {
             )}
           </div>
 
+          {/* Add Button */}
           <button
             onClick={handleAddToCart}
             disabled={outOfStock}
@@ -99,7 +111,11 @@ export default function ProductCard({ product }) {
                 : "bg-maroon text-white hover:bg-[#651414]"
             }`}
           >
-            {outOfStock ? "Sold Out" : added ? "Added ✓" : "Add"}
+            {outOfStock
+              ? "Sold Out"
+              : added
+              ? "Added ✓"
+              : "Add"}
           </button>
         </div>
       </div>
