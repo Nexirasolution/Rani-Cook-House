@@ -3,6 +3,7 @@ import Image from "next/image";
 import { connectDB } from "@/lib/mongodb";
 import Category from "@/models/Category";
 import Product from "@/models/Product";
+import Banner from "@/models/Banner";
 import ProductCard from "@/components/ProductCard";
 import { CATEGORY_ICONS, LeafIcon } from "@/components/Icons";
 import HeroSlider from "@/components/HeroSlider";
@@ -17,9 +18,11 @@ async function getData() {
     .populate("category", "name slug")
     .limit(8)
     .lean();
+  const banners = await Banner.find({ isActive: true }).sort({ sortOrder: 1 }).lean();
   return {
     categories: JSON.parse(JSON.stringify(categories)),
     bestSelling: JSON.parse(JSON.stringify(bestSelling)),
+    banners: JSON.parse(JSON.stringify(banners)),
   };
 }
 
@@ -49,15 +52,25 @@ const CATEGORY_IMAGES = {
   "Conch Meat (Sangu Sathai)": "/category/sangu-sathai.png",
   "Dry Fruits & Nuts": "/category/dry-fruits.png",
 };
+
 export default async function HomePage() {
-  const { categories, bestSelling } = await getData();
+  const { categories, bestSelling, banners } = await getData();
   const settings = await getSettings();
+
+  const slides = banners.length
+    ? banners.map((b) => ({
+        image: b.image?.url || "/hero/hero-banner.png",
+        subtitle: b.subtitle || "",
+        heading: b.title || "",
+        headingLine2: "",
+        ctaLabel: b.ctaText || "Shop Now",
+        ctaHref: b.ctaLink || "/products",
+      }))
+    : [];
 
   return (
     <>
-      
-
-      <HeroSlider />
+      <HeroSlider initialSlides={slides} />
 
       {/* Categories */}
       <section className="mx-auto max-w-7xl px-5 py-12 md:px-8 md:py-16">
@@ -157,7 +170,6 @@ export default async function HomePage() {
           ))}
         </div>
       </section>
-
     </>
   );
 }

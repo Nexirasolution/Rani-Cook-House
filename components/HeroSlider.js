@@ -9,60 +9,19 @@ const playfair = Playfair_Display({
   weight: ["400", "500"],
 });
 
-export default function HeroSlider() {
-  const [slides, setSlides] = useState([]);
+const FALLBACK_SLIDE = {
+  image: "/hero/hero-banner.png",
+  heading: "Authentic Homemade",
+  headingLine2: "Pickles",
+  ctaLabel: "Shop Now",
+  ctaHref: "/products",
+};
+
+export default function HeroSlider({ initialSlides }) {
+  const [slides] = useState(
+    initialSlides?.length ? initialSlides : [FALLBACK_SLIDE]
+  );
   const [active, setActive] = useState(0);
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    async function loadBanners() {
-      try {
-        const res = await fetch("/api/banners?activeOnly=true", {
-          cache: "no-store",
-        });
-        const data = await res.json();
-
-        if (res.ok && data.banners?.length) {
-          setSlides(
-            data.banners.map((b) => ({
-              image: b.image?.url || "/hero/hero-banner.png",
-              subtitle: b.subtitle || "",
-              heading: b.title || "",
-              headingLine2: "",
-              ctaLabel: b.ctaText || "Shop Now",
-              ctaHref: b.ctaLink || "/products",
-            }))
-          );
-        } else {
-          // Fallback slide if no banners exist
-          setSlides([
-            {
-              image: "/hero/hero-banner.png",
-              heading: "Authentic Homemade",
-              headingLine2: "Pickles",
-              ctaLabel: "Shop Now",
-              ctaHref: "/products",
-            },
-          ]);
-        }
-      } catch (err) {
-        console.error("Failed to load banners:", err);
-        setSlides([
-          {
-            image: "/hero/hero-banner.png",
-            heading: "Authentic Homemade",
-            headingLine2: "Pickles",
-            ctaLabel: "Shop Now",
-            ctaHref: "/products",
-          },
-        ]);
-      } finally {
-        setLoading(false);
-      }
-    }
-
-    loadBanners();
-  }, []);
 
   useEffect(() => {
     if (slides.length <= 1) return;
@@ -71,10 +30,6 @@ export default function HeroSlider() {
     }, 4500);
     return () => clearInterval(timer);
   }, [slides.length]);
-
-  if (loading || slides.length === 0) {
-    return <section className="relative h-[36vh] bg-champagne sm:h-[55vh] lg:h-[70vh]" />;
-  }
 
   const slide = slides[active];
 
@@ -86,6 +41,7 @@ export default function HeroSlider() {
         alt={slide.heading || "Rani's Cook House"}
         fill
         priority
+        sizes="100vw"
         className="object-cover object-center"
       />
 
