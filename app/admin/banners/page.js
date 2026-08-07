@@ -1,7 +1,6 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import Image from "next/image";
 import Modal from "@/components/Modal";
 import ImageUploader from "@/components/ImageUploader";
 
@@ -25,11 +24,26 @@ export default function AdminBannersPage() {
   const [error, setError] = useState("");
 
   async function loadData() {
-    setLoading(true);
-    const res = await fetch("/api/banners");
-    const data = await res.json();
-    setBanners(data.banners || []);
-    setLoading(false);
+    try {
+      setLoading(true);
+
+      const res = await fetch("/api/banners", {
+        cache: "no-store",
+      });
+
+      const data = await res.json();
+
+      if (!res.ok) {
+        throw new Error(data.error || "Failed to load banners.");
+      }
+
+      setBanners(data.banners || []);
+    } catch (err) {
+      console.error("Load banners error:", err);
+      setError(err.message || "Failed to load banners.");
+    } finally {
+      setLoading(false);
+    }
   }
 
   useEffect(() => {
@@ -38,56 +52,97 @@ export default function AdminBannersPage() {
 
   function openAdd() {
     setEditingId(null);
-    setForm(EMPTY_FORM);
+    setForm({
+      ...EMPTY_FORM,
+      image: [],
+    });
     setError("");
     setModalOpen(true);
   }
 
-  function openEdit(b) {
-    setEditingId(b._id);
+  function openEdit(banner) {
+    setEditingId(banner._id);
+
     setForm({
-      title: b.title,
-      subtitle: b.subtitle || "",
-      image: b.image?.url ? [b.image] : [],
-      ctaText: b.ctaText || "",
-      ctaLink: b.ctaLink || "",
-      isActive: b.isActive,
-      sortOrder: b.sortOrder || 0,
+      title: banner.title || "",
+      subtitle: banner.subtitle || "",
+      image: banner.image?.url
+        ? [
+            {
+              url: banner.image.url,
+              publicId: banner.image.publicId || "",
+            },
+          ]
+        : [],
+      ctaText: banner.ctaText || "",
+      ctaLink: banner.ctaLink || "",
+      isActive: banner.isActive ?? true,
+      sortOrder: banner.sortOrder ?? 0,
     });
+
     setError("");
     setModalOpen(true);
   }
 
   async function handleSave(e) {
     e.preventDefault();
+
     setSaving(true);
     setError("");
+
     try {
+      if (!form.title.trim()) {
+        throw new Error("Title is required.");
+      }
+
+      const image = form.image?.[0]
+        ? {
+            url: form.image[0].url,
+            publicId: form.image[0].publicId || "",
+          }
+        : {
+            url: "",
+            publicId: "",
+          };
+
       const payload = {
-        title: form.title,
-        subtitle: form.subtitle,
-        ctaText: form.ctaText,
-        ctaLink: form.ctaLink,
-        isActive: form.isActive,
-        sortOrder: Number(form.sortOrder),
-        image: form.image[0]
-          ? { url: form.image[0].url, publicId: form.image[0].publicId }
-          : { url: "", publicId: "" },
+        title: form.title.trim(),
+        subtitle: form.subtitle.trim(),
+        image,
+        ctaText: form.ctaText.trim(),
+        ctaLink: form.ctaLink.trim(),
+        isActive: Boolean(form.isActive),
+        sortOrder: Number(form.sortOrder) || 0,
       };
 
-      const res = await fetch(editingId ? `/api/banners/${editingId}` : "/api/banners", {
-        method: editingId ? "PUT" : "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(payload),
-      });
+      const res = await fetch(
+        editingId ? `/api/banners/${editingId}` : "/api/banners",
+        {
+          method: editingId ? "PUT" : "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(payload),
+        }
+      );
 
       const data = await res.json();
-      if (!res.ok) throw new Error(data.error || "Failed to save banner.");
+
+      if (!res.ok) {
+        throw new Error(data.error || "Failed to save banner.");
+      }
 
       setModalOpen(false);
-      loadData();
+      setEditingId(null);
+      setForm({
+        ...EMPTY_FORM,
+        image: [],
+      });
+
+      await loadData();
     } catch (err) {
-      setError(err.message);
+      console.error("Save banner error:", err);
+      setError(err.message || "Failed to save banner.");
     } finally {
       setSaving(false);
     }
@@ -95,69 +150,101 @@ export default function AdminBannersPage() {
 
   async function handleDelete(id) {
     if (!confirm("Delete this banner?")) return;
-    const res = await fetch(`/api/banners/${id}`, { method: "DELETE" });
-    const data = await res.json();
-    if (!res.ok) {
-      alert(data.error);
-      return;
+
+    try {
+      const res = await fetch(`/api/banners/${id}`, {
+        method: "DELETE",
+      });
+
+      const data = await res.json();
+
+      if (!res.ok) {
+        throw new Error(data.error || "Failed to delete banner.");
+      }
+
+      await loadData();
+    } catch (err) {
+      console.error("Delete banner error:", err);
+      alert(err.message || "Failed to delete banner.");
     }
-    loadData();
   }
 
-  async function toggleActive(b) {
-    const res = await fetch(`/api/banners/${b._id}`, {
-      method: "PUT",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ isActive: !b.isActive }),
-    });
-    const data = await res.json();
-    if (!res.ok) {
-      alert(data.error);
-      return;
+  async function toggleActive(banner) {
+    try {
+      const res = await fetch(`/api/banners/${banner._id}`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          isActive: !banner.isActive,
+        }),
+      });
+
+      const data = await res.json();
+
+      if (!res.ok) {
+        throw new Error(data.error || "Failed to update banner.");
+      }
+
+      await loadData();
+    } catch (err) {
+      console.error("Toggle banner error:", err);
+      alert(err.message || "Failed to update banner.");
     }
-    loadData();
   }
 
   return (
     <div>
+      {/* Header */}
       <div className="flex flex-wrap items-center justify-between gap-4">
         <div>
-          <h1 className="font-display text-2xl font-bold text-maroon">Banners</h1>
-          <p className="mt-1 text-sm text-muted">{banners.length} banners</p>
+          <h1 className="font-display text-2xl font-bold text-maroon">
+            Banners
+          </h1>
+
+          <p className="mt-1 text-sm text-muted">
+            {banners.length} {banners.length === 1 ? "banner" : "banners"}
+          </p>
         </div>
+
         <button
           onClick={openAdd}
-          className="rounded-full bg-maroon px-6 py-2 text-sm font-semibold text-white shadow-soft hover:bg-maroonDark"
+          className="rounded-full bg-maroon px-6 py-2.5 text-sm font-semibold text-white shadow-soft transition hover:bg-maroonDark"
         >
           + Add Banner
         </button>
       </div>
 
+      {/* Banner List */}
       <div className="mt-6 space-y-4">
         {loading ? (
-          <p className="text-muted">Loading...</p>
+          <div className="rounded-2xl bg-white p-8 text-center shadow-card">
+            <p className="text-muted">Loading banners...</p>
+          </div>
         ) : banners.length === 0 ? (
           <div className="rounded-2xl bg-white p-8 text-center shadow-card">
             <p className="text-muted">No banners yet.</p>
           </div>
         ) : (
-          banners.map((b) => (
+          banners.map((banner) => (
             <div
-              key={b._id}
-              className="rounded-3xl border border-gold/10 bg-white p-4 md:p-5 shadow-card hover:shadow-lg transition"
+              key={banner._id}
+              className="rounded-3xl border border-gold/10 bg-white p-4 shadow-card transition hover:shadow-lg md:p-5"
             >
               <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
-                <div className="flex items-center gap-4 flex-1 min-w-0">
+                {/* Image + Details */}
+                <div className="flex min-w-0 flex-1 items-center gap-4">
                   <div className="h-20 w-32 shrink-0 overflow-hidden rounded-xl bg-champagne">
-                    {b.image?.url ? (
-                   <Image
-                      src={imageUrl}
-                      alt={banner.title}
-                      width={160}
-                      height={100}
-                      unoptimized
-                      className="h-[100px] w-[160px] rounded-xl object-cover"
-                    />
+                    {banner.image?.url ? (
+                      <img
+                        src={banner.image.url}
+                        alt={banner.title || "Banner"}
+                        width={160}
+                        height={100}
+                        className="h-full w-full object-cover"
+                        loading="lazy"
+                      />
                     ) : (
                       <div className="flex h-full w-full items-center justify-center text-xs text-muted">
                         No image
@@ -166,42 +253,54 @@ export default function AdminBannersPage() {
                   </div>
 
                   <div className="min-w-0">
-                    <h2 className="font-display text-lg font-bold text-ink truncate">{b.title}</h2>
-                    {b.subtitle && (
-                      <p className="mt-1 line-clamp-2 text-sm text-muted">{b.subtitle}</p>
+                    <h2 className="truncate font-display text-lg font-bold text-ink">
+                      {banner.title}
+                    </h2>
+
+                    {banner.subtitle && (
+                      <p className="mt-1 line-clamp-2 text-sm text-muted">
+                        {banner.subtitle}
+                      </p>
                     )}
-                    {b.ctaText && (
-                      <p className="mt-1 text-xs text-maroon font-medium">
-                        CTA: {b.ctaText} → {b.ctaLink || "(no link)"}
+
+                    {banner.ctaText && (
+                      <p className="mt-1 text-xs font-medium text-maroon">
+                        CTA: {banner.ctaText}{" "}
+                        {banner.ctaLink
+                          ? `→ ${banner.ctaLink}`
+                          : "→ (no link)"}
                       </p>
                     )}
                   </div>
                 </div>
 
+                {/* Actions */}
                 <div className="flex items-center justify-end gap-4">
                   <button
-                    onClick={() => toggleActive(b)}
-                  className={`rounded-full px-3 py-1 text-xs font-medium ${
-  b.isActive
-    ? "bg-maroon/10 text-maroon"
-    : "bg-muted/10 text-muted"
-}`}
+                    onClick={() => toggleActive(banner)}
+                    className={`rounded-full px-3 py-1 text-xs font-medium transition ${
+                      banner.isActive
+                        ? "bg-maroon/10 text-maroon"
+                        : "bg-muted/10 text-muted"
+                    }`}
                   >
-                    {b.isActive ? "Active" : "Hidden"}
+                    {banner.isActive ? "Active" : "Hidden"}
                   </button>
 
                   <button
+                    type="button"
                     title="Edit"
-                    onClick={() => openEdit(b)}
-                    className="text-maroon hover:scale-110 transition"
+                    onClick={() => openEdit(banner)}
+                    className="text-maroon transition hover:scale-110"
                   >
                     ✏️
                   </button>
 
                   <button
+                    type="button"
                     title="Delete"
-                    onClick={() => handleDelete(b._id)}
-                    className="text-red-600 hover:scale-110 transition"
+                    onClick={() => handleDelete(banner._id)}
+                    className="text-red-600 transition hover:scale-110"
                   >
                     🗑️
                   </button>
@@ -212,91 +311,168 @@ export default function AdminBannersPage() {
         )}
       </div>
 
+      {/* Add / Edit Modal */}
       <Modal
         open={modalOpen}
-        onClose={() => setModalOpen(false)}
+        onClose={() => {
+          if (!saving) {
+            setModalOpen(false);
+          }
+        }}
         title={editingId ? "Edit Banner" : "Add Banner"}
       >
         <form onSubmit={handleSave} className="space-y-4">
+          {/* Title */}
           <label className="block">
-            <span className="mb-1 block text-xs font-semibold text-ink/70">Title *</span>
+            <span className="mb-1 block text-xs font-semibold text-ink/70">
+              Title *
+            </span>
+
             <input
               required
               value={form.title}
-              onChange={(e) => setForm({ ...form, title: e.target.value })}
+              onChange={(e) =>
+                setForm({
+                  ...form,
+                  title: e.target.value,
+                })
+              }
+              placeholder="e.g. Traditional Conch Meat"
               className="w-full rounded-xl border border-gold/30 px-4 py-2.5 text-sm outline-none focus:border-maroon"
             />
           </label>
 
+          {/* Subtitle */}
           <label className="block">
-            <span className="mb-1 block text-xs font-semibold text-ink/70">Subtitle</span>
+            <span className="mb-1 block text-xs font-semibold text-ink/70">
+              Subtitle
+            </span>
+
             <textarea
               rows={2}
               value={form.subtitle}
-              onChange={(e) => setForm({ ...form, subtitle: e.target.value })}
+              onChange={(e) =>
+                setForm({
+                  ...form,
+                  subtitle: e.target.value,
+                })
+              }
+              placeholder="e.g. Authentic coastal flavors, traditionally prepared"
               className="w-full rounded-xl border border-gold/30 px-4 py-2.5 text-sm outline-none focus:border-maroon"
             />
           </label>
 
+          {/* Banner Image */}
           <div>
-            <span className="mb-2 block text-xs font-semibold text-ink/70">Banner Image</span>
+            <span className="mb-2 block text-xs font-semibold text-ink/70">
+              Banner Image
+            </span>
+
             <ImageUploader
               images={form.image}
-              onChange={(imgs) => setForm({ ...form, image: imgs })}
+              onChange={(imgs) =>
+                setForm({
+                  ...form,
+                  image: imgs,
+                })
+              }
               folder="rani-banners"
               multiple={false}
             />
           </div>
 
+          {/* CTA */}
           <div className="grid gap-4 sm:grid-cols-2">
             <label className="block">
-              <span className="mb-1 block text-xs font-semibold text-ink/70">CTA Button Text</span>
+              <span className="mb-1 block text-xs font-semibold text-ink/70">
+                CTA Button Text
+              </span>
+
               <input
                 value={form.ctaText}
-                onChange={(e) => setForm({ ...form, ctaText: e.target.value })}
+                onChange={(e) =>
+                  setForm({
+                    ...form,
+                    ctaText: e.target.value,
+                  })
+                }
                 placeholder="e.g. Shop Now"
                 className="w-full rounded-xl border border-gold/30 px-4 py-2.5 text-sm outline-none focus:border-maroon"
               />
             </label>
 
             <label className="block">
-              <span className="mb-1 block text-xs font-semibold text-ink/70">CTA Link</span>
+              <span className="mb-1 block text-xs font-semibold text-ink/70">
+                CTA Link
+              </span>
+
               <input
                 value={form.ctaLink}
-                onChange={(e) => setForm({ ...form, ctaLink: e.target.value })}
-                placeholder="/products or https://..."
+                onChange={(e) =>
+                  setForm({
+                    ...form,
+                    ctaLink: e.target.value,
+                  })
+                }
+                placeholder="/products"
                 className="w-full rounded-xl border border-gold/30 px-4 py-2.5 text-sm outline-none focus:border-maroon"
               />
             </label>
           </div>
 
+          {/* Sort Order */}
           <label className="block">
-            <span className="mb-1 block text-xs font-semibold text-ink/70">Sort Order</span>
+            <span className="mb-1 block text-xs font-semibold text-ink/70">
+              Sort Order
+            </span>
+
             <input
               type="number"
               value={form.sortOrder}
-              onChange={(e) => setForm({ ...form, sortOrder: e.target.value })}
+              onChange={(e) =>
+                setForm({
+                  ...form,
+                  sortOrder: e.target.value,
+                })
+              }
               className="w-full rounded-xl border border-gold/30 px-4 py-2.5 text-sm outline-none focus:border-maroon"
             />
           </label>
 
+          {/* Active */}
           <label className="flex items-center gap-2 text-sm">
             <input
               type="checkbox"
               checked={form.isActive}
-              onChange={(e) => setForm({ ...form, isActive: e.target.checked })}
+              onChange={(e) =>
+                setForm({
+                  ...form,
+                  isActive: e.target.checked,
+                })
+              }
             />
+
             Active (visible on site)
           </label>
 
-          {error && <p className="text-sm text-terracotta">{error}</p>}
+          {/* Error */}
+          {error && (
+            <div className="rounded-xl bg-red-50 px-4 py-3 text-sm text-red-600">
+              {error}
+            </div>
+          )}
 
+          {/* Submit */}
           <button
             type="submit"
             disabled={saving}
-            className="w-full rounded-full bg-maroon px-8 py-3 text-sm font-semibold text-white shadow-soft hover:bg-maroonDark disabled:opacity-60"
+            className="w-full rounded-full bg-maroon px-8 py-3 text-sm font-semibold text-white shadow-soft transition hover:bg-maroonDark disabled:cursor-not-allowed disabled:opacity-60"
           >
-            {saving ? "Saving..." : editingId ? "Save Changes" : "Add Banner"}
+            {saving
+              ? "Saving..."
+              : editingId
+              ? "Save Changes"
+              : "Add Banner"}
           </button>
         </form>
       </Modal>
