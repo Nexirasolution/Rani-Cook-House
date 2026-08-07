@@ -3,8 +3,7 @@ import { notFound } from "next/navigation";
 import { connectDB } from "@/lib/mongodb";
 import Product from "@/models/Product";
 import "@/models/Category";
-import Navbar from "@/components/Navbar";
-import Footer from "@/components/Footer";
+
 import ProductDetailActions from "@/components/ProductDetailActions";
 import { LeafIcon } from "@/components/Icons";
 import ProductGallery from "@/components/ProductGallery";
@@ -68,7 +67,6 @@ export default async function ProductDetailPage({ params }) {
 
   return (
     <>
-      <Navbar settings={settings} />
       <section className="mx-auto max-w-6xl px-5 py-12 md:px-8">
         {/* Image + core info side by side */}
         <div className="grid gap-12 md:grid-cols-2">
@@ -95,7 +93,7 @@ export default async function ProductDetailPage({ params }) {
               {product.compareAtPrice > product.price && (
                 <span className="text-base text-muted line-through">₹{product.compareAtPrice}</span>
               )}
-              <span className="text-sm text-muted">/ {product.unit}</span>
+              
             </div>
 
             <ProductDetailActions product={product} />
@@ -108,7 +106,6 @@ export default async function ProductDetailPage({ params }) {
 
      <RelatedProducts products={related} categoryId={product.category?._id} />
 
-      <Footer />
     </>
   );
 }

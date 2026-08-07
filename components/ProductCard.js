@@ -1,5 +1,4 @@
 "use client";
-
 import Link from "next/link";
 import Image from "next/image";
 import { useState } from "react";
@@ -16,11 +15,8 @@ export default function ProductCard({ product }) {
   const handleAddToCart = (e) => {
     e.preventDefault();
     e.stopPropagation();
-
     if (outOfStock) return;
-
     addItem(product, 1);
-
     setAdded(true);
     setTimeout(() => setAdded(false), 1500);
   };
@@ -53,25 +49,6 @@ export default function ProductCard({ product }) {
             Out of Stock
           </span>
         )}
-
-        {/* Floating Add Button */}
-        {!outOfStock && (
-          <button
-            onClick={handleAddToCart}
-            aria-label={`Add ${product.name} to cart`}
-            className={`absolute bottom-3 right-3 flex h-10 w-10 items-center justify-center rounded-full shadow-md transition-all duration-300 ${
-              added
-                ? "bg-green-600 text-white opacity-100"
-                : "bg-white text-maroon opacity-0 hover:bg-maroon hover:text-white group-hover:opacity-100"
-            }`}
-          >
-            {added ? (
-              <Check className="h-4 w-4" />
-            ) : (
-              <ShoppingBag className="h-4 w-4" />
-            )}
-          </button>
-        )}
       </div>
 
       {/* Product Details */}
@@ -80,18 +57,11 @@ export default function ProductCard({ product }) {
           {product.name}
         </h3>
 
-        {product.unit && (
-          <p className="mt-1 text-xs text-gray-500">
-            {product.unit}
-          </p>
-        )}
-
         <div className="mt-3 flex items-center justify-between gap-2">
           <div className="flex items-center gap-2">
             <span className="text-lg font-bold text-maroon">
               ₹{product.price}
             </span>
-
             {product.compareAtPrice > product.price && (
               <span className="text-sm text-gray-400 line-through">
                 ₹{product.compareAtPrice}
@@ -103,7 +73,14 @@ export default function ProductCard({ product }) {
           <button
             onClick={handleAddToCart}
             disabled={outOfStock}
-            className={`rounded-full px-3 py-1.5 text-xs font-semibold transition-colors ${
+            aria-label={
+              outOfStock
+                ? "Sold out"
+                : added
+                ? "Added to cart"
+                : `Add ${product.name} to cart`
+            }
+            className={`flex h-8 w-8 items-center justify-center rounded-full transition-colors ${
               outOfStock
                 ? "cursor-not-allowed bg-gray-100 text-gray-400"
                 : added
@@ -111,11 +88,11 @@ export default function ProductCard({ product }) {
                 : "bg-maroon text-white hover:bg-[#651414]"
             }`}
           >
-            {outOfStock
-              ? "Sold Out"
-              : added
-              ? "Added ✓"
-              : "Add"}
+            {added ? (
+              <Check className="h-4 w-4" />
+            ) : (
+              <ShoppingBag className="h-4 w-4" />
+            )}
           </button>
         </div>
       </div>

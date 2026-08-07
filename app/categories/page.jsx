@@ -3,8 +3,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { connectDB } from "@/lib/mongodb";
 import Category from "@/models/Category";
-import Navbar from "@/components/Navbar";
-import Footer from "@/components/Footer";
+
 import { getSettings } from "@/lib/settings";
 
 export const dynamic = "force-dynamic";
@@ -50,7 +49,7 @@ export default async function CategoriesPage({ searchParams }) {
 
   return (
     <>
-      <Navbar settings={settings} />
+      
 
       <section className="mx-auto max-w-7xl px-5 py-10 md:px-8 md:py-16">
         <div className="mb-10 text-center">
@@ -99,7 +98,7 @@ export default async function CategoriesPage({ searchParams }) {
         )}
       </section>
 
-      <Footer />
+     
     </>
   );
 }
