@@ -9,6 +9,10 @@ import { useCart } from "@/context/CartContext";
 export default function ProductCard({ product }) {
   const img = product.media?.[0]?.url;
   const outOfStock = product.stock <= 0;
+  const hasDiscount = product.compareAtPrice > product.price;
+  const discountPercent = hasDiscount
+    ? Math.round(((product.compareAtPrice - product.price) / product.compareAtPrice) * 100)
+    : 0;
   const { addItem } = useCart();
   const [added, setAdded] = useState(false);
 
@@ -49,6 +53,13 @@ export default function ProductCard({ product }) {
             Out of Stock
           </span>
         )}
+
+        {/* Discount badge */}
+        {!outOfStock && hasDiscount && (
+          <span className="absolute right-3 top-3 rounded-full bg-terracotta px-3 py-1 text-[10px] font-bold uppercase tracking-wide text-white">
+            {discountPercent}% OFF
+          </span>
+        )}
       </div>
 
       {/* Product Details */}
@@ -57,12 +68,16 @@ export default function ProductCard({ product }) {
           {product.name}
         </h3>
 
+        {product.unit && (
+          <p className="mt-1 text-xs text-muted">{product.unit}</p>
+        )}
+
         <div className="mt-3 flex items-center justify-between gap-2">
-          <div className="flex items-center gap-2">
+          <div className="flex flex-wrap items-baseline gap-2">
             <span className="text-lg font-bold text-maroon">
               ₹{product.price}
             </span>
-            {product.compareAtPrice > product.price && (
+            {hasDiscount && (
               <span className="text-sm text-gray-400 line-through">
                 ₹{product.compareAtPrice}
               </span>
@@ -95,6 +110,12 @@ export default function ProductCard({ product }) {
             )}
           </button>
         </div>
+
+        {!outOfStock && product.stock <= (product.lowStockThreshold ?? 5) && (
+          <p className="mt-1 text-xs font-semibold text-terracotta">
+            Only {product.stock} left
+          </p>
+        )}
       </div>
     </Link>
   );

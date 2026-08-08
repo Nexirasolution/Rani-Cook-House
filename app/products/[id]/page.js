@@ -40,6 +40,10 @@ export default async function ProductDetailPage({ params }) {
   const related = await getRelatedProducts(product);
   const settings = await getSettings();
   const media = product.media || [];
+  const hasDiscount = product.compareAtPrice > product.price;
+  const discountPercent = hasDiscount
+    ? Math.round(((product.compareAtPrice - product.price) / product.compareAtPrice) * 100)
+    : 0;
 
   const accordionItems = [
     {
@@ -53,6 +57,7 @@ export default async function ProductDetailPage({ params }) {
       title: "Product Details",
       content: (
         <div className="flex flex-wrap gap-2">
+          {product.unit && <Tag label={product.unit} />}
           {product.attributes?.handmade && <Tag label="Handmade with Care" />}
           {product.attributes?.natural && <Tag label="100% Natural" />}
           {product.attributes?.ecoFriendly && <Tag label="Eco-Friendly" />}
@@ -86,15 +91,31 @@ export default async function ProductDetailPage({ params }) {
               {product.name}
             </h1>
 
-            <div className="mt-4 flex items-baseline gap-3">
+            {product.unit && (
+              <p className="mt-1 text-sm text-muted">{product.unit}</p>
+            )}
+
+            <div className="mt-4 flex flex-wrap items-baseline gap-3">
               <span className="font-display text-3xl font-bold text-maroon">
                 ₹{product.price}
               </span>
-              {product.compareAtPrice > product.price && (
-                <span className="text-base text-muted line-through">₹{product.compareAtPrice}</span>
+              {hasDiscount && (
+                <>
+                  <span className="text-base text-muted line-through">
+                    ₹{product.compareAtPrice}
+                  </span>
+                  <span className="rounded-full bg-terracotta/10 px-2 py-0.5 text-xs font-bold text-terracotta">
+                    {discountPercent}% OFF
+                  </span>
+                </>
               )}
-              
             </div>
+
+            {product.stock > 0 && product.stock <= (product.lowStockThreshold ?? 5) && (
+              <p className="mt-2 text-sm font-semibold text-terracotta">
+                Only {product.stock} left in stock — order soon
+              </p>
+            )}
 
             <ProductDetailActions product={product} />
           </div>
