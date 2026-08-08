@@ -55,9 +55,8 @@ export default function BulkUploadModal({ open, onClose, onDone }) {
           included here — add them per product afterwards from the Products page.
         </p>
 
-        <a
-          href="/product_bulk_upload_template.xlsx"
-          download
+        
+        <a  href="/api/products/bulk/template"
           className="inline-block text-xs font-semibold text-maroon hover:underline"
         >
           Download the template →

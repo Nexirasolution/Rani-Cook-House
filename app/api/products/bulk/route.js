@@ -1,7 +1,8 @@
 import { NextResponse } from "next/server";
+import * as XLSX from "xlsx";
 import { connectDB } from "@/lib/mongodb";
 import Product from "@/models/Product";
-import "@/models/Category";
+import Category from "@/models/Category";
 
 function slugify(text) {
   return text
@@ -13,325 +14,106 @@ function slugify(text) {
     .replace(/^-+|-+$/g, "");
 }
 
-function normalizeMedia(media) {
-  if (!Array.isArray(media)) return [];
-
-  return media
-    .filter((item) => item?.url)
-    .map((item) => ({
-      url: item.url,
-      publicId: item.publicId || "",
-      type: item.type || item.mediaType || "image",
-    }));
+function toBool(val, fallback) {
+  if (val === undefined || val === null || val === "") return fallback;
+  if (typeof val === "boolean") return val;
+  const s = String(val).trim().toLowerCase();
+  return s === "true" || s === "1" || s === "yes";
 }
 
-function escapeRegex(str) {
-  return str.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+function toNumber(val, fallback = 0) {
+  const n = Number(val);
+  return Number.isFinite(n) ? n : fallback;
 }
 
-const SORT_MAP = {
-  newest: { createdAt: -1 },
-  "price-asc": { price: 1 },
-  "price-desc": { price: -1 },
-  "name-asc": { name: 1 },
-  "name-desc": { name: -1 },
-};
-
-
-// GET PRODUCTS
-export async function GET(req) {
-  try {
-    await connectDB();
-
-    const { searchParams } = new URL(req.url);
-
-    const category = searchParams.get("category");
-    const search = (searchParams.get("search") || "").trim();
-    const featured = searchParams.get("featured");
-    const activeOnly = searchParams.get("activeOnly");
-    const sort = searchParams.get("sort");
-
-    const page = Math.max(
-      parseInt(searchParams.get("page") || "1", 10),
-      1
-    );
-
-    const hasPageParam = searchParams.has("page");
-
-    const rawLimit = parseInt(
-      searchParams.get("limit") || "0",
-      10
-    );
-
-    const limit = hasPageParam
-      ? rawLimit > 0
-        ? rawLimit
-        : 12
-      : rawLimit;
-
-
-    const query = {};
-
-    if (category) {
-      query.category = category;
-    }
-
-    if (featured === "true") {
-      query.isFeatured = true;
-    }
-
-    if (activeOnly === "true") {
-      query.isActive = true;
-    }
-
-
-    if (search) {
-      const safe = escapeRegex(search);
-
-      query.$or = [
-        {
-          name: {
-            $regex: safe,
-            $options: "i",
-          },
-        },
-        {
-          description: {
-            $regex: safe,
-            $options: "i",
-          },
-        },
-        {
-          sku: {
-            $regex: safe,
-            $options: "i",
-          },
-        },
-      ];
-    }
-
-
-    const sortSpec =
-      (sort && SORT_MAP[sort]) || {
-        sku: 1,
-      };
-
-
-    let cursor = Product.find(query)
-      .populate("category", "name slug")
-      .sort(sortSpec);
-
-
-    let total = null;
-
-
-    if (limit) {
-      total = await Product.countDocuments(query);
-
-      cursor = cursor
-        .skip((page - 1) * limit)
-        .limit(limit);
-    }
-
-
-    const products = await cursor;
-
-
-    const response = {
-      products,
-    };
-
-
-    if (limit) {
-      response.pagination = {
-        page,
-        limit,
-        total,
-        totalPages: Math.max(
-          Math.ceil(total / limit),
-          1
-        ),
-      };
-    }
-
-
-    return NextResponse.json(response);
-
-  } catch (error) {
-
-    console.error("GET PRODUCTS ERROR:", error);
-
-    return NextResponse.json(
-      {
-        error: "Failed to fetch products",
-      },
-      {
-        status: 500,
-      }
-    );
-  }
-}
-
-
-
-// CREATE PRODUCT
 export async function POST(req) {
-
   try {
-
     await connectDB();
 
-
-    const body = await req.json();
-
-
-    if (
-      !body.name ||
-      !body.category ||
-      body.price === undefined
-    ) {
-      return NextResponse.json(
-        {
-          error:
-            "Name, category and price are required.",
-        },
-        {
-          status: 400,
-        }
-      );
+    const formData = await req.formData();
+    const file = formData.get("file");
+    if (!file || typeof file === "string") {
+      return NextResponse.json({ error: "No file uploaded." }, { status: 400 });
     }
 
+    const arrayBuffer = await file.arrayBuffer();
+    const buffer = Buffer.from(arrayBuffer);
 
-    if (!body.sku || !String(body.sku).trim()) {
+    const wb = XLSX.read(buffer, { type: "buffer" });
+    const sheetName = wb.SheetNames.includes("Products") ? "Products" : wb.SheetNames[0];
+    const sheet = wb.Sheets[sheetName];
+    const rows = XLSX.utils.sheet_to_json(sheet, { defval: "" });
 
-      return NextResponse.json(
-        {
-          error: "SKU is required.",
-        },
-        {
-          status: 400,
-        }
-      );
+    if (!rows.length) {
+      return NextResponse.json({ error: "The file has no data rows." }, { status: 400 });
     }
 
+    const categories = await Category.find({}, "name").lean();
+    const categoryMap = new Map(categories.map((c) => [c.name.trim().toLowerCase(), c._id]));
 
+    const seenSkus = new Set();
+    const results = [];
+    let created = 0;
+    let errors = 0;
 
-    const sku = String(body.sku)
-      .trim()
-      .toUpperCase();
+    for (let i = 0; i < rows.length; i++) {
+      const row = rows[i];
+      const rowNum = i + 2; // account for header row, 1-indexed
+      const name = String(row.name || "").trim();
 
+      try {
+        if (!name) throw new Error("Missing product name.");
 
+        const sku = String(row.sku || "").trim().toUpperCase();
+        if (!sku) throw new Error("Missing SKU.");
 
-    const existingSku =
-      await Product.findOne({
-        sku,
-      });
+        if (seenSkus.has(sku)) throw new Error(`SKU "${sku}" is duplicated in this file.`);
 
+        const price = toNumber(row.price, NaN);
+        if (!Number.isFinite(price) || price < 0) throw new Error("Missing or invalid price.");
 
-    if (existingSku) {
+        const categoryName = String(row.category || "").trim();
+        const categoryId = categoryMap.get(categoryName.toLowerCase());
+        if (!categoryId) throw new Error(`Category "${categoryName || "(blank)"}" not found.`);
 
-      return NextResponse.json(
-        {
-          error:
-            `SKU "${sku}" is already in use.`,
-        },
-        {
-          status: 400,
-        }
-      );
+        const existingSku = await Product.findOne({ sku });
+        if (existingSku) throw new Error(`SKU "${sku}" already exists.`);
 
-    }
+        let slug = slugify(name);
+        const existingSlug = await Product.findOne({ slug });
+        if (existingSlug) slug = `${slug}-${Date.now().toString().slice(-5)}-${i}`;
 
+        await Product.create({
+          name,
+          sku,
+          slug,
+          category: categoryId,
+          price,
+          compareAtPrice: toNumber(row.compareAtPrice, 0),
+          unit: String(row.unit || "").trim(),
+          stock: toNumber(row.stock, 0),
+          lowStockThreshold: toNumber(row.lowStockThreshold, 5),
+          description: String(row.description || "").trim(),
+          isFeatured: toBool(row.isFeatured, false),
+          isActive: toBool(row.isActive, true),
+          media: [],
+        });
 
-
-    let slug = slugify(body.name);
-
-
-    const existingSlug =
-      await Product.findOne({
-        slug,
-      });
-
-
-    if (existingSlug) {
-
-      slug =
-        `${slug}-${Date.now()
-          .toString()
-          .slice(-5)}`;
-
-    }
-
-
-
-    const product =
-      await Product.create({
-
-        ...body,
-
-        sku,
-
-        slug,
-
-
-        // defaults
-        isActive:
-          body.isActive ?? true,
-
-
-        isFeatured:
-          body.isFeatured ?? false,
-
-
-        media:
-          normalizeMedia(body.media),
-
-      });
-
-
-
-    return NextResponse.json(
-      {
-        product,
-      },
-      {
-        status: 201,
+        seenSkus.add(sku);
+        created++;
+        results.push({ row: rowNum, name, status: "created" });
+      } catch (err) {
+        errors++;
+        results.push({ row: rowNum, name, status: "error", message: err.message });
       }
-    );
+    }
 
-
+    return NextResponse.json({
+      summary: { totalRows: rows.length, created, errors },
+      results,
+    });
   } catch (error) {
-
-    console.error(
-      "CREATE PRODUCT ERROR:",
-      error
-    );
-
-
-    if (error.code === 11000) {
-
-      return NextResponse.json(
-        {
-          error:
-            "SKU must be unique.",
-        },
-        {
-          status: 400,
-        }
-      );
-
-    }
-
-
-    return NextResponse.json(
-      {
-        error:
-          "Failed to create product.",
-      },
-      {
-        status: 500,
-      }
-    );
-
+    console.error("BULK UPLOAD ERROR:", error);
+    return NextResponse.json({ error: "Failed to process the file." }, { status: 500 });
   }
 }

@@ -12,7 +12,7 @@ const EMPTY_FORM = {
   category: "",
   price: "",
   compareAtPrice: "",
-  unit: "piece",
+  unit: "",
   stock: 0,
   lowStockThreshold: 5,
   description: "",
@@ -72,21 +72,21 @@ export default function AdminProductsPage() {
   }
 
   function openEdit(p) {
-  setEditingId(p._id);
-  setForm({
-    name: p.name || "",
-    sku: p.sku || "",
-    category: p.category?._id || "",
-    price: p.price || "",
-    compareAtPrice: p.compareAtPrice || "",
-    unit: p.unit || "piece",
-    stock: p.stock ?? 0,
-    lowStockThreshold: p.lowStockThreshold ?? 5,
-    description: p.description || "",
-    isFeatured: p.isFeatured ?? false,
-    isActive: p.isActive ?? true,
-    media: p.media || [],
-  });
+    setEditingId(p._id);
+    setForm({
+      name: p.name || "",
+      sku: p.sku || "",
+      category: p.category?._id || "",
+      price: p.price || "",
+      compareAtPrice: p.compareAtPrice || "",
+      unit: p.unit || "",
+      stock: p.stock ?? 0,
+      lowStockThreshold: p.lowStockThreshold ?? 5,
+      description: p.description || "",
+      isFeatured: p.isFeatured ?? false,
+      isActive: p.isActive ?? true,
+      media: p.media || [],
+    });
     setError("");
     setModalOpen(true);
   }
@@ -99,6 +99,7 @@ export default function AdminProductsPage() {
       const payload = {
         ...form,
         sku: form.sku.trim().toUpperCase(),
+        unit: form.unit.trim(),
         price: Number(form.price),
         compareAtPrice: Number(form.compareAtPrice) || 0,
         stock: Number(form.stock),
@@ -194,6 +195,7 @@ export default function AdminProductsPage() {
               <th className="px-4 py-3">Product</th>
               <th className="px-4 py-3">Category</th>
               <th className="px-4 py-3">Price</th>
+              <th className="px-4 py-3">Unit</th>
               <th className="px-4 py-3">Stock</th>
               <th className="px-4 py-3">Status</th>
               <th className="px-4 py-3 text-right">Actions</th>
@@ -201,9 +203,9 @@ export default function AdminProductsPage() {
           </thead>
           <tbody>
             {loading ? (
-              <tr><td colSpan={7} className="px-4 py-8 text-center text-muted">Loading...</td></tr>
+              <tr><td colSpan={8} className="px-4 py-8 text-center text-muted">Loading...</td></tr>
             ) : products.length === 0 ? (
-              <tr><td colSpan={7} className="px-4 py-8 text-center text-muted">
+              <tr><td colSpan={8} className="px-4 py-8 text-center text-muted">
                 {search ? "No products match your search." : "No products yet. Add your first product."}
               </td></tr>
             ) : (
@@ -233,6 +235,7 @@ export default function AdminProductsPage() {
                   </td>
                   <td className="px-4 py-3 text-ink/70">{p.category?.name}</td>
                   <td className="px-4 py-3 text-ink/70">₹{p.price}</td>
+                  <td className="px-4 py-3 text-ink/70">{p.unit || "—"}</td>
                   <td className="px-4 py-3">
                     <span className={p.stock <= p.lowStockThreshold ? "font-semibold text-terracotta" : "text-ink/70"}>
                       {p.stock}
@@ -332,6 +335,22 @@ export default function AdminProductsPage() {
             <FormField label="Price (₹)" required type="number" value={form.price} onChange={(v) => setForm({ ...form, price: v })} />
             <FormField label="Compare Price" type="number" value={form.compareAtPrice} onChange={(v) => setForm({ ...form, compareAtPrice: v })} />
             <FormField label="Stock" required type="number" value={form.stock} onChange={(v) => setForm({ ...form, stock: v })} />
+            <FormField
+              label="Unit"
+              required
+              value={form.unit}
+              onChange={(v) => setForm({ ...form, unit: v })}
+              placeholder="e.g. 100 gram, 500 ml, 1 pack"
+            />
+          </div>
+
+          <div className="grid gap-4 sm:grid-cols-2">
+            <FormField
+              label="Low Stock Threshold"
+              type="number"
+              value={form.lowStockThreshold}
+              onChange={(v) => setForm({ ...form, lowStockThreshold: v })}
+            />
           </div>
 
           <label className="block">
