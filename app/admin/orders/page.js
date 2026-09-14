@@ -87,6 +87,19 @@ export default function AdminOrdersPage() {
     }
   }
 
+  async function syncPayment(id) {
+    setUpdating(true);
+    const res = await fetch(`/api/orders/${id}/sync-payment`, { method: "POST" });
+    const data = await res.json();
+    setUpdating(false);
+    if (res.ok) {
+      setSelected(data.order);
+      loadOrders();
+    } else {
+      alert(data.error);
+    }
+  }
+
   async function deleteOrder(id) {
     if (!window.confirm("Delete this order? This cannot be undone.")) return;
     setUpdating(true);
@@ -362,6 +375,15 @@ export default function AdminOrdersPage() {
                 >
                   {PAYMENT_STATUS_LABELS[selected.paymentStatus] || selected.paymentStatus}
                 </span>
+                {selected.paymentStatus !== "paid" && (
+                  <button
+                    onClick={() => syncPayment(selected._id)}
+                    disabled={updating}
+                    className="rounded-full border border-maroon/30 px-3 py-1 text-xs font-semibold text-maroon hover:bg-champagne disabled:opacity-50"
+                  >
+                    Check payment status
+                  </button>
+                )}
               </div>
               <span className="font-display text-sm font-bold text-maroon">₹{selected.total}</span>
             </div>
