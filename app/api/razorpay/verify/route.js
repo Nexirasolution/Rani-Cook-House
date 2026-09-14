@@ -1,6 +1,4 @@
-// app/api/razorpay/verify/route.js
 import { NextResponse } from "next/server";
-import crypto from "crypto";
 import { connectDB } from "@/lib/mongodb";
 import Order from "@/models/Order";
 import Product from "@/models/Product";
@@ -16,31 +14,45 @@ async function generateOrderNumber() {
   return `${prefix}-${datePart}-${seq}`;
 }
 
+export async function GET(req) {
+  try {
+    await connectDB();
+    const { searchParams } = new URL(req.url);
+    const status = searchParams.get("status");
+    const limit = parseInt(searchParams.get("limit") || "0", 10);
+    // Pass ?includePending=true to see abandoned/unpaid online-payment
+    // attempts too (useful for debugging, not for the normal orders view).
+    const includePending = searchParams.get("includePending") === "true";
+
+    const conditions = [];
+    if (status) conditions.push({ status });
+    if (!includePending) {
+      // Only ever show COD orders, or Online orders that actually got paid.
+      // An "Online" order sitting at paymentStatus "created"/"failed" means
+      // the customer opened the Razorpay sheet but never completed payment —
+      // that shouldn't clutter the order list.
+      conditions.push({
+        $or: [{ paymentMethod: "COD" }, { paymentMethod: "Online", paymentStatus: "paid" }],
+      });
+    }
+
+    const query = conditions.length ? { $and: conditions } : {};
+
+    let cursor = Order.find(query).sort({ createdAt: -1 });
+    if (limit) cursor = cursor.limit(limit);
+
+    const orders = await cursor;
+    return NextResponse.json({ orders });
+  } catch (err) {
+    return NextResponse.json({ error: "Failed to fetch orders." }, { status: 500 });
+  }
+}
+
 export async function POST(req) {
   try {
     await connectDB();
     const body = await req.json();
-    const {
-      razorpay_order_id,
-      razorpay_payment_id,
-      razorpay_signature,
-      customer,
-      items,
-      shippingFee = 0,
-    } = body;
-
-    if (!razorpay_order_id || !razorpay_payment_id || !razorpay_signature) {
-      return NextResponse.json({ error: "Missing payment details." }, { status: 400 });
-    }
-
-    const expectedSignature = crypto
-      .createHmac("sha256", process.env.RAZORPAY_KEY_SECRET)
-      .update(`${razorpay_order_id}|${razorpay_payment_id}`)
-      .digest("hex");
-
-    if (expectedSignature !== razorpay_signature) {
-      return NextResponse.json({ error: "Payment verification failed." }, { status: 400 });
-    }
+    const { customer, items, paymentMethod, shippingFee = 0 } = body;
 
     if (!customer?.name || !customer?.phone || !customer?.address) {
       return NextResponse.json({ error: "Name, phone and address are required." }, { status: 400 });
@@ -49,6 +61,7 @@ export async function POST(req) {
       return NextResponse.json({ error: "Cart is empty." }, { status: 400 });
     }
 
+    // Validate stock and compute totals server-side
     let subtotal = 0;
     const validatedItems = [];
 
@@ -60,11 +73,15 @@ export async function POST(req) {
       if (product.stock < item.quantity) {
         return NextResponse.json({ error: `Insufficient stock for ${product.name}.` }, { status: 400 });
       }
+
+      const firstImage = product.media?.find((m) => m.type === "image");
+
       subtotal += product.price * item.quantity;
       validatedItems.push({
         product: product._id,
         name: product.name,
-        image: product.images?.[0]?.url || "",
+        sku: product.sku || "",
+        image: firstImage?.url || "",
         price: product.price,
         quantity: item.quantity,
         unit: product.unit,
@@ -81,18 +98,14 @@ export async function POST(req) {
       subtotal,
       shippingFee,
       total,
-      paymentMethod: "Online",
-      paymentStatus: "paid",
-      status: "confirmed",
-      statusHistory: [{ status: "confirmed", note: "Paid via Razorpay" }],
-      razorpay: {
-        orderId: razorpay_order_id,
-        paymentId: razorpay_payment_id,
-        signature: razorpay_signature,
-      },
+      paymentMethod: paymentMethod || "COD",
+      paymentStatus: "cod",
+      status: "pending",
+      statusHistory: [{ status: "pending", note: "Order placed" }],
     });
 
-    // Stock reduction — same as COD flow
+    // Decrement stock (COD orders are confirmed immediately, unlike Online
+    // orders which only decrement once payment is actually captured).
     for (const item of validatedItems) {
       await Product.findByIdAndUpdate(item.product, { $inc: { stock: -item.quantity } });
     }
@@ -100,6 +113,6 @@ export async function POST(req) {
     return NextResponse.json({ order }, { status: 201 });
   } catch (err) {
     console.error(err);
-    return NextResponse.json({ error: "Payment verification failed." }, { status: 500 });
+    return NextResponse.json({ error: "Failed to place order." }, { status: 500 });
   }
 }

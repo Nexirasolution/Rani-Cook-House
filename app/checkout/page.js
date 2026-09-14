@@ -108,15 +108,19 @@ export default function CheckoutPage() {
 
     setLoading(true);
     try {
+      // create-order now creates the local Order record (paymentStatus:
+      // "created") BEFORE the payment sheet opens. If the customer closes
+      // the tab mid-payment, the webhook can still find and confirm it.
       const orderRes = await fetch("/api/razorpay/create-order", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ amount: total }),
+        body: JSON.stringify({ customer: form, items, shippingFee }),
       });
       const orderData = await orderRes.json();
       if (!orderRes.ok) throw new Error(orderData.error || "Failed to start payment.");
 
       const rzpOrder = orderData.order;
+      const localOrderId = orderData.localOrderId;
 
       const rzp = new window.Razorpay({
         key: process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID,
@@ -140,9 +144,7 @@ export default function CheckoutPage() {
                 razorpay_order_id: response.razorpay_order_id,
                 razorpay_payment_id: response.razorpay_payment_id,
                 razorpay_signature: response.razorpay_signature,
-                customer: form,
-                items,
-                shippingFee,
+                localOrderId,
               }),
             });
             const verifyData = await verifyRes.json();
@@ -188,7 +190,6 @@ export default function CheckoutPage() {
   if (placedOrder) {
     return (
       <>
-       
         <section className="mx-auto max-w-xl px-5 py-20 text-center md:px-8">
           <span className="badge-stamp mx-auto flex h-16 w-16 items-center justify-center border-gold/40 bg-maroon text-ivory">
             ✓
@@ -202,21 +203,21 @@ export default function CheckoutPage() {
             Save this number, or use your phone number, to track your order anytime.
           </p>
           <div className="mt-8 flex justify-center gap-4">
-            
-            <a  href="/track-order"
+            <a
+              href="/track-order"
               className="rounded-full border border-maroon/30 px-8 py-3 text-sm font-semibold text-maroon hover:bg-champagne"
             >
               Track Order
             </a>
-            
-             <a href="/products"
+
+            <a
+              href="/products"
               className="rounded-full bg-maroon px-8 py-3 text-sm font-semibold text-ivory shadow-soft hover:bg-maroon/90"
             >
               Continue Shopping
             </a>
           </div>
         </section>
-        
       </>
     );
   }
@@ -228,7 +229,9 @@ export default function CheckoutPage() {
         <h1 className="font-display text-3xl font-bold text-maroon">Checkout</h1>
 
         {items.length === 0 ? (
-          <p className="mt-8 text-muted">Your cart is empty. <a href="/products" className="text-maroon underline">Shop now</a></p>
+          <p className="mt-8 text-muted">
+            Your cart is empty. <a href="/products" className="text-maroon underline">Shop now</a>
+          </p>
         ) : (
           <form onSubmit={handleSubmit} className="mt-8 grid gap-10 md:grid-cols-3">
             <div className="space-y-4 md:col-span-2">
@@ -251,7 +254,9 @@ export default function CheckoutPage() {
                     className="w-full rounded-xl border border-gold/30 bg-white px-4 py-2.5 text-sm outline-none focus:border-maroon"
                   >
                     {INDIAN_STATES.map((s) => (
-                      <option key={s} value={s}>{s}</option>
+                      <option key={s} value={s}>
+                        {s}
+                      </option>
                     ))}
                   </select>
                 </label>
@@ -291,7 +296,9 @@ export default function CheckoutPage() {
               <div className="mt-4 space-y-2">
                 {items.map((item) => (
                   <div key={item.productId} className="flex justify-between text-sm text-ink/80">
-                    <span>{item.name} × {item.quantity}</span>
+                    <span>
+                      {item.name} × {item.quantity}
+                    </span>
                     <span>₹{item.price * item.quantity}</span>
                   </div>
                 ))}
@@ -320,7 +327,6 @@ export default function CheckoutPage() {
           </form>
         )}
       </section>
-     
     </>
   );
 }
