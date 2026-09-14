@@ -23,9 +23,9 @@ export default function CheckoutPage() {
   const [error, setError] = useState("");
   const [placedOrder, setPlacedOrder] = useState(null);
   const [settings, setSettings] = useState({
-    shippingFee: 49,
-    freeShipping: 999,
-    stateShippingRates: [],
+    defaultShippingFee: 49,
+    freeShippingAbove: 999,
+    stateShipping: [],
     storeName: "Rani's Cook Food",
   });
 
@@ -33,7 +33,10 @@ export default function CheckoutPage() {
     fetch("/api/settings")
       .then((res) => res.json())
       .then((data) => {
-        if (data.settings) setSettings(data.settings);
+        // Merge rather than replace, so any field the API doesn't return
+        // (or an unexpected empty response) can't wipe out the defaults
+        // above and break the shipping calculation below.
+        if (data.settings) setSettings((s) => ({ ...s, ...data.settings }));
       })
       .catch(() => {});
   }, []);
@@ -41,13 +44,14 @@ export default function CheckoutPage() {
   // Look up the fee for the selected state; fall back to the default fee
   // when that state has no override configured in Settings.
   const stateFee = useMemo(() => {
-    const match = (settings.stateShippingRates || []).find(
+    const match = (settings.stateShipping || []).find(
       (r) => r.state?.trim().toLowerCase() === form.state?.trim().toLowerCase()
     );
-    return match ? Number(match.fee) : Number(settings.shippingFee);
+    const fee = match ? Number(match.fee) : Number(settings.defaultShippingFee);
+    return Number.isFinite(fee) ? fee : 0;
   }, [settings, form.state]);
 
-  const shippingFee = subtotal >= Number(settings.freeShipping) ? 0 : stateFee;
+  const shippingFee = subtotal >= Number(settings.freeShippingAbove) ? 0 : stateFee;
   const total = subtotal + shippingFee;
 
   function update(field, value) {

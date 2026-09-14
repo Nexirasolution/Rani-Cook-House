@@ -9,9 +9,9 @@ const DEFAULT_SETTINGS = {
   phone: "",
   whatsapp: "",
   address: "",
-  shippingFee: "49",
-  freeShipping: "999",
-  stateShippingRates: [],
+  defaultShippingFee: "49",
+  freeShippingAbove: "999",
+  stateShipping: [],
   deliveryTime: "2-4 Days",
   instagram: "",
   facebook: "",
@@ -35,9 +35,9 @@ export default function SettingsPage() {
         setSettings({
           ...DEFAULT_SETTINGS,
           ...data.settings,
-          shippingFee: String(data.settings.shippingFee ?? "49"),
-          freeShipping: String(data.settings.freeShipping ?? "999"),
-          stateShippingRates: (data.settings.stateShippingRates || []).map((r) => ({
+          defaultShippingFee: String(data.settings.defaultShippingFee ?? "49"),
+          freeShippingAbove: String(data.settings.freeShippingAbove ?? "999"),
+          stateShipping: (data.settings.stateShipping || []).map((r) => ({
             state: r.state,
             fee: String(r.fee ?? "0"),
           })),
@@ -67,26 +67,26 @@ export default function SettingsPage() {
   };
 
   function addStateRate() {
-    const usedStates = new Set(settings.stateShippingRates.map((r) => r.state));
+    const usedStates = new Set(settings.stateShipping.map((r) => r.state));
     const nextState = INDIAN_STATES.find((s) => !usedStates.has(s)) || INDIAN_STATES[0];
     setSettings((prev) => ({
       ...prev,
-      stateShippingRates: [...prev.stateShippingRates, { state: nextState, fee: prev.shippingFee || "0" }],
+      stateShipping: [...prev.stateShipping, { state: nextState, fee: prev.defaultShippingFee || "0" }],
     }));
   }
 
   function updateStateRate(index, field, value) {
     setSettings((prev) => {
-      const rows = [...prev.stateShippingRates];
+      const rows = [...prev.stateShipping];
       rows[index] = { ...rows[index], [field]: value };
-      return { ...prev, stateShippingRates: rows };
+      return { ...prev, stateShipping: rows };
     });
   }
 
   function removeStateRate(index) {
     setSettings((prev) => ({
       ...prev,
-      stateShippingRates: prev.stateShippingRates.filter((_, i) => i !== index),
+      stateShipping: prev.stateShipping.filter((_, i) => i !== index),
     }));
   }
 
@@ -98,9 +98,9 @@ export default function SettingsPage() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           ...settings,
-          shippingFee: Number(settings.shippingFee),
-          freeShipping: Number(settings.freeShipping),
-          stateShippingRates: settings.stateShippingRates
+          defaultShippingFee: Number(settings.defaultShippingFee),
+          freeShippingAbove: Number(settings.freeShippingAbove),
+          stateShipping: settings.stateShipping
             .filter((r) => r.state)
             .map((r) => ({ state: r.state, fee: Number(r.fee) || 0 })),
         }),
@@ -207,8 +207,8 @@ export default function SettingsPage() {
               <label className="font-semibold block mb-2">Default Shipping Fee (₹)</label>
               <input
                 type="number"
-                name="shippingFee"
-                value={settings.shippingFee}
+                name="defaultShippingFee"
+                value={settings.defaultShippingFee}
                 onChange={handleChange}
                 className="w-full border rounded-xl px-4 py-3"
               />
@@ -221,8 +221,8 @@ export default function SettingsPage() {
               <label className="font-semibold block mb-2">Free Shipping Above (₹)</label>
               <input
                 type="number"
-                name="freeShipping"
-                value={settings.freeShipping}
+                name="freeShippingAbove"
+                value={settings.freeShippingAbove}
                 onChange={handleChange}
                 className="w-full border rounded-xl px-4 py-3"
               />
@@ -243,13 +243,13 @@ export default function SettingsPage() {
                 </button>
               </div>
 
-              {settings.stateShippingRates.length === 0 ? (
+              {settings.stateShipping.length === 0 ? (
                 <p className="text-sm text-gray-500">
                   No state-specific rates yet — every order uses the default shipping fee above.
                 </p>
               ) : (
                 <div className="space-y-3">
-                  {settings.stateShippingRates.map((row, idx) => (
+                  {settings.stateShipping.map((row, idx) => (
                     <div key={idx} className="flex flex-wrap items-center gap-3">
                       <select
                         value={row.state}
