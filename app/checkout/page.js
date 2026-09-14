@@ -66,6 +66,24 @@ export default function CheckoutPage() {
     return true;
   }
 
+  // Falls back to this if the direct /api/razorpay/verify call fails —
+  // the webhook may independently confirm the same payment a moment later,
+  // so we give it a short window before treating this as a real failure.
+  async function pollForConfirmation(orderId, { attempts = 12, intervalMs = 2500 } = {}) {
+    for (let i = 0; i < attempts; i++) {
+      await new Promise((r) => setTimeout(r, intervalMs));
+      try {
+        const res = await fetch(`/api/orders/${orderId}`);
+        const data = await res.json();
+        if (res.ok && data.order?.paymentStatus === "paid") return data.order;
+        if (res.ok && data.order?.paymentStatus === "failed") return null;
+      } catch {
+        // transient network hiccup — keep polling rather than bailing out
+      }
+    }
+    return null;
+  }
+
   async function handleSubmit(e) {
     e.preventDefault();
     setError("");
@@ -123,7 +141,18 @@ export default function CheckoutPage() {
             setPlacedOrder(verifyData.order);
             clearCart();
           } catch (err) {
-            setError(err.message);
+            console.error("verify call failed, falling back to polling:", err);
+            // The webhook may confirm this exact payment independently even
+            // though this call failed — give it a few seconds before giving up.
+            const confirmed = await pollForConfirmation(localOrderId);
+            if (confirmed) {
+              setPlacedOrder(confirmed);
+              clearCart();
+            } else {
+              setError(
+                "We couldn't confirm your payment yet. If money was deducted, please check Track Order in a minute, or contact us with your phone number."
+              );
+            }
           } finally {
             setLoading(false);
           }
