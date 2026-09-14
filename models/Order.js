@@ -42,8 +42,6 @@ const OrderSchema = new Schema(
     shippingFee: { type: Number, default: 0 },
     total: { type: Number, required: true },
 
-    // NOTE: lowercase to match every route/UI already using
-    // "pending" / "confirmed" / "packed" / "shipped" / "delivered" / "cancelled".
     status: {
       type: String,
       enum: ["pending", "confirmed", "packed", "shipped", "delivered", "cancelled"],
@@ -51,21 +49,20 @@ const OrderSchema = new Schema(
     },
     statusHistory: [StatusHistorySchema],
 
+    // COD removed — every order is paid online now.
     paymentMethod: {
       type: String,
-      enum: ["COD", "Online"],
-      default: "COD",
+      enum: ["Online"],
+      default: "Online",
     },
 
-    // Only meaningful for "Online" orders. COD orders can just stay "pending"
-    // here — the admin UI's order status is what drives COD fulfillment.
-    // "created"  = Razorpay order created, checkout sheet opened, not paid yet
-    // "paid"     = webhook or client verify confirmed the payment
-    // "failed"   = Razorpay reported payment.failed
+    // "created" = Razorpay order created, checkout sheet opened, not paid yet
+    // "paid"    = webhook or client verify confirmed the payment
+    // "failed"  = Razorpay reported payment.failed
     paymentStatus: {
       type: String,
-      enum: ["created", "paid", "failed", "cod"],
-      default: "cod",
+      enum: ["created", "paid", "failed"],
+      default: "created",
     },
 
     razorpay: {

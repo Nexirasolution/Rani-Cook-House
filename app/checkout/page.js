@@ -19,7 +19,6 @@ export default function CheckoutPage() {
     state: "Tamil Nadu",
     pincode: "",
   });
-  const [paymentMethod, setPaymentMethod] = useState("COD");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [placedOrder, setPlacedOrder] = useState(null);
@@ -67,36 +66,7 @@ export default function CheckoutPage() {
     return true;
   }
 
-  async function handleCOD(e) {
-    e.preventDefault();
-    setError("");
-    if (!validate()) return;
-
-    setLoading(true);
-    try {
-      const res = await fetch("/api/orders", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          customer: form,
-          items,
-          paymentMethod: "COD",
-          shippingFee,
-        }),
-      });
-      const data = await res.json();
-      if (!res.ok) throw new Error(data.error || "Failed to place order.");
-
-      setPlacedOrder(data.order);
-      clearCart();
-    } catch (err) {
-      setError(err.message);
-    } finally {
-      setLoading(false);
-    }
-  }
-
-  async function handleRazorpay(e) {
+  async function handleSubmit(e) {
     e.preventDefault();
     setError("");
     if (!validate()) return;
@@ -108,9 +78,9 @@ export default function CheckoutPage() {
 
     setLoading(true);
     try {
-      // create-order now creates the local Order record (paymentStatus:
-      // "created") BEFORE the payment sheet opens. If the customer closes
-      // the tab mid-payment, the webhook can still find and confirm it.
+      // Creates the local Order record (paymentStatus: "created") BEFORE the
+      // payment sheet opens. If the customer closes the tab mid-payment, the
+      // webhook can still find and confirm it — nothing is lost.
       const orderRes = await fetch("/api/razorpay/create-order", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -174,14 +144,6 @@ export default function CheckoutPage() {
     } catch (err) {
       setError(err.message);
       setLoading(false);
-    }
-  }
-
-  function handleSubmit(e) {
-    if (paymentMethod === "COD") {
-      handleCOD(e);
-    } else {
-      handleRazorpay(e);
     }
   }
 
@@ -263,30 +225,9 @@ export default function CheckoutPage() {
                 <Field label="Pincode" value={form.pincode} onChange={(v) => update("pincode", v)} />
               </div>
 
-              <div>
-                <p className="mb-2 text-sm font-semibold text-ink">Payment Method</p>
-                <div className="flex gap-3">
-                  {["Online"].map((m) => (
-                    <button
-                      type="button"
-                      key={m}
-                      onClick={() => setPaymentMethod(m)}
-                      className={`rounded-full border px-5 py-2 text-xs font-semibold transition ${
-                        paymentMethod === m
-                          ? "border-maroon bg-maroon text-ivory"
-                          : "border-gold/30 text-ink/70 hover:bg-champagne"
-                      }`}
-                    >
-                      {m === "COD" ? "Cash on Delivery" : m}
-                    </button>
-                  ))}
-                </div>
-                {paymentMethod !== "COD" && (
-                  <p className="mt-2 text-xs text-muted">
-                    You'll be redirected to Razorpay's secure checkout to complete payment.
-                  </p>
-                )}
-              </div>
+              <p className="text-xs text-muted">
+                You'll be redirected to Razorpay's secure checkout to complete payment.
+              </p>
 
               {error && <p className="text-sm text-terracotta">{error}</p>}
             </div>
@@ -321,7 +262,7 @@ export default function CheckoutPage() {
                 disabled={loading}
                 className="mt-6 w-full rounded-full bg-maroon px-8 py-3.5 text-sm font-semibold text-ivory shadow-soft transition hover:bg-maroon/90 disabled:opacity-60"
               >
-                {loading ? "Processing..." : paymentMethod === "COD" ? "Place Order" : "Pay & Place Order"}
+                {loading ? "Processing..." : "Pay & Place Order"}
               </button>
             </div>
           </form>

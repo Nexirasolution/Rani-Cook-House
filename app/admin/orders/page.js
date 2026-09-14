@@ -15,6 +15,18 @@ const STATUS_COLORS = {
   cancelled: "bg-gray-100 text-gray-600",
 };
 
+const PAYMENT_STATUS_LABELS = {
+  created: "Awaiting payment",
+  paid: "Paid",
+  failed: "Payment failed",
+};
+
+const PAYMENT_STATUS_COLORS = {
+  created: "bg-gold/20 text-goldDark",
+  paid: "bg-forest/10 text-forest",
+  failed: "bg-red-100 text-red-700",
+};
+
 const EMPTY_TRACKING = { courier: "", trackingNumber: "", trackingUrl: "" };
 
 export default function AdminOrdersPage() {
@@ -22,6 +34,7 @@ export default function AdminOrdersPage() {
   const [loading, setLoading] = useState(true);
   const [filter, setFilter] = useState("");
   const [search, setSearch] = useState("");
+  const [includePending, setIncludePending] = useState(false);
   const [selected, setSelected] = useState(null);
   const [updating, setUpdating] = useState(false);
   const [zoomImage, setZoomImage] = useState(null); // { src, alt } | null
@@ -32,6 +45,7 @@ export default function AdminOrdersPage() {
     setLoading(true);
     const params = new URLSearchParams();
     if (filter) params.set("status", filter);
+    if (includePending) params.set("includePending", "true");
     const res = await fetch(`/api/orders?${params.toString()}`);
     const data = await res.json();
     setOrders(data.orders || []);
@@ -40,7 +54,7 @@ export default function AdminOrdersPage() {
 
   useEffect(() => {
     loadOrders();
-  }, [filter]);
+  }, [filter, includePending]);
 
   // Sync the tracking form whenever a different order is opened
   useEffect(() => {
@@ -117,7 +131,7 @@ export default function AdminOrdersPage() {
         />
       </div>
 
-      <div className="mt-4 flex flex-wrap gap-2">
+      <div className="mt-4 flex flex-wrap items-center gap-2">
         <button
           onClick={() => setFilter("")}
           className={`rounded-full border px-4 py-1.5 text-xs font-semibold ${filter === "" ? "border-maroon bg-maroon text-white" : "border-gold/30 text-ink/70"}`}
@@ -133,6 +147,16 @@ export default function AdminOrdersPage() {
             {s}
           </button>
         ))}
+
+        <label className="ml-2 flex items-center gap-2 text-xs font-medium text-ink/70">
+          <input
+            type="checkbox"
+            checked={includePending}
+            onChange={(e) => setIncludePending(e.target.checked)}
+            className="h-3.5 w-3.5 rounded border-gold/40 text-maroon focus:ring-maroon"
+          />
+          Show unpaid attempts
+        </label>
       </div>
 
       {/* Desktop table (hidden on mobile) */}
@@ -144,6 +168,7 @@ export default function AdminOrdersPage() {
               <th className="px-4 py-3">Customer</th>
               <th className="px-4 py-3">Phone</th>
               <th className="px-4 py-3">Total</th>
+              <th className="px-4 py-3">Payment</th>
               <th className="px-4 py-3">Status</th>
               <th className="px-4 py-3">Date</th>
               <th className="px-4 py-3 text-right">Action</th>
@@ -151,9 +176,9 @@ export default function AdminOrdersPage() {
           </thead>
           <tbody>
             {loading ? (
-              <tr><td colSpan={7} className="px-4 py-8 text-center text-muted">Loading...</td></tr>
+              <tr><td colSpan={8} className="px-4 py-8 text-center text-muted">Loading...</td></tr>
             ) : filtered.length === 0 ? (
-              <tr><td colSpan={7} className="px-4 py-8 text-center text-muted">No orders found.</td></tr>
+              <tr><td colSpan={8} className="px-4 py-8 text-center text-muted">No orders found.</td></tr>
             ) : (
               filtered.map((o) => (
                 <tr key={o._id} className="border-b border-gold/10 last:border-0">
@@ -161,6 +186,13 @@ export default function AdminOrdersPage() {
                   <td className="px-4 py-3 text-ink/70">{o.customer.name}</td>
                   <td className="px-4 py-3 text-ink/70">{o.customer.phone}</td>
                   <td className="px-4 py-3 text-ink/70">₹{o.total}</td>
+                  <td className="px-4 py-3">
+                    <span
+                      className={`rounded-full px-3 py-1 text-xs font-medium ${PAYMENT_STATUS_COLORS[o.paymentStatus] || "bg-gray-100 text-gray-600"}`}
+                    >
+                      {PAYMENT_STATUS_LABELS[o.paymentStatus] || o.paymentStatus}
+                    </span>
+                  </td>
                   <td className="px-4 py-3">
                     <span className={`rounded-full px-3 py-1 text-xs font-medium capitalize ${STATUS_COLORS[o.status]}`}>
                       {o.status}
@@ -205,11 +237,18 @@ export default function AdminOrdersPage() {
                     <p className="mt-0.5 text-sm text-ink/70 truncate">{o.customer.name}</p>
                     <p className="text-xs text-muted">{o.customer.phone}</p>
                   </div>
-                  <span
-                    className={`shrink-0 rounded-full px-3 py-1 text-xs font-medium capitalize ${STATUS_COLORS[o.status]}`}
-                  >
-                    {o.status}
-                  </span>
+                  <div className="flex shrink-0 flex-col items-end gap-1">
+                    <span
+                      className={`rounded-full px-3 py-1 text-xs font-medium capitalize ${STATUS_COLORS[o.status]}`}
+                    >
+                      {o.status}
+                    </span>
+                    <span
+                      className={`rounded-full px-3 py-1 text-xs font-medium ${PAYMENT_STATUS_COLORS[o.paymentStatus] || "bg-gray-100 text-gray-600"}`}
+                    >
+                      {PAYMENT_STATUS_LABELS[o.paymentStatus] || o.paymentStatus}
+                    </span>
+                  </div>
                 </div>
 
                 <div className="mt-3 flex items-center justify-between border-t border-gold/10 pt-3 text-sm">
@@ -285,9 +324,16 @@ export default function AdminOrdersPage() {
                 </div>
               ))}
             </div>
-            <div className="mt-3 flex justify-between gap-3 border-t border-gold/15 pt-3 font-display text-sm font-bold text-maroon">
-              <span>Total ({selected.paymentMethod})</span>
-              <span>₹{selected.total}</span>
+            <div className="mt-3 flex items-center justify-between gap-3 border-t border-gold/15 pt-3">
+              <div className="flex items-center gap-2 font-display text-sm font-bold text-maroon">
+                <span>Total ({selected.paymentMethod})</span>
+                <span
+                  className={`rounded-full px-3 py-1 text-xs font-medium ${PAYMENT_STATUS_COLORS[selected.paymentStatus] || "bg-gray-100 text-gray-600"}`}
+                >
+                  {PAYMENT_STATUS_LABELS[selected.paymentStatus] || selected.paymentStatus}
+                </span>
+              </div>
+              <span className="font-display text-sm font-bold text-maroon">₹{selected.total}</span>
             </div>
 
             <div className="leaf-divider my-5" />
